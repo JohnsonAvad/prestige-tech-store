@@ -1,0 +1,432 @@
+// TechStore — Prisma Schema
+// All 14 entities
+// Run: npx prisma db push   then   npx prisma generate
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+// ENUMS
+// ─────────────────────────────────────
+
+enum Role {
+  CUSTOMER
+  ADMIN
+  SUPPORT
+}
+
+enum LoyaltyTier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+}
+
+enum OrderStatus {
+  PLACED
+  PAYMENT_PENDING
+  PAYMENT_CONFIRMED
+  PROCESSING
+  DISPATCHED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  MTN_MOMO
+  AIRTEL_MONEY
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+  TIMEOUT
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum TicketCategory {
+  ORDER_ISSUE
+  PAYMENT
+  PRODUCT
+  RETURNS
+  DELIVERY
+  OTHER
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum SenderRole {
+  CUSTOMER
+  SUPPORT
+  ADMIN
+}
+
+enum LoyaltyTransactionType {
+  EARN
+  REDEEM
+  BONUS
+  REFERRAL
+  BIRTHDAY
+  REVIEW
+  ADJUSTMENT
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED
+}
+
+// ─────────────────────────────────────
+// 1. USER
+// ─────────────────────────────────────
+model User {
+  id               String      @id @default(uuid())
+  name             String
+  email            String      @unique
+  phone            String      @unique
+  passwordHash     String
+  role             Role        @default(CUSTOMER)
+  isEmailVerified  Boolean     @default(false)
+  isPhoneVerified  Boolean     @default(false)
+  loyaltyPoints    Int         @default(0)
+  tier             LoyaltyTier @default(BRONZE)
+  referralCode     String      @unique @default(uuid())
+  referredById     String?
+  referredBy       User?       @relation("Referrals", fields: [referredById], references: [id])
+  referrals        User[]      @relation("Referrals")
+  birthday         DateTime?
+  fcmToken         String?
+  whatsappNumber   String?
+  isActive         Boolean     @default(true)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  orders           Order[]
+  reviews          Review[]
+  tickets          SupportTicket[]
+  ticketMessages   TicketMessage[]
+  addresses        Address[]
+  wishlistItems    Wishlist[]
+  loyaltyTxns      LoyaltyTransaction[]
+  chatMessages     ChatMessage[]
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────
+// 2. CATEGORY
+// ─────────────────────────────────────
+model Category {
+  id           String     @id @default(uuid())
+  name         String
+  slug         String     @unique
+  description  String?
+  parentId     String?
+  parent       Category?  @relation("Subcategories", fields: [parentId], references: [id])
+  children     Category[] @relation("Subcategories")
+  iconUrl      String?
+  bannerUrl    String?
+  displayOrder Int        @default(0)
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  products     Product[]
+
+  @@map("categories")
+}
+
+// ─────────────────────────────────────
+// 3. PRODUCT
+// ─────────────────────────────────────
+model Product {
+  id            String    @id @default(uuid())
+  name          String
+  slug          String    @unique
+  brand         String
+  categoryId    String
+  category      Category  @relation(fields: [categoryId], references: [id])
+  sku           String    @unique
+  price         Float
+  comparePrice  Float?
+  description   String?   @db.Text
+  specs         Json?
+  stock         Int       @default(0)
+  lowStockAlert Int       @default(5)
+  weight        Float?
+  tags          String[]
+  images        String[]
+  isFeatured    Boolean   @default(false)
+  isNewArrival  Boolean   @default(false)
+  isPublished   Boolean   @default(true)
+  totalSold     Int       @default(0)
+  averageRating Float     @default(0)
+  reviewCount   Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  orderItems    OrderItem[]
+  reviews       Review[]
+  wishlistItems Wishlist[]
+  flashSales    FlashSale[]
+
+  @@map("products")
+}
+
+// ─────────────────────────────────────
+// 4. ORDER
+// ─────────────────────────────────────
+model Order {
+  id              String        @id @default(uuid())
+  orderNumber     String        @unique @default(uuid())
+  customerId      String
+  customer        User          @relation(fields: [customerId], references: [id])
+  status          OrderStatus   @default(PLACED)
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus @default(PENDING)
+  paymentRef      String?
+  subtotal        Float
+  discountAmount  Float         @default(0)
+  deliveryFee     Float         @default(0)
+  pointsRedeemed  Int           @default(0)
+  total           Float
+  deliveryAddress Json
+  couponCode      String?
+  notes           String?
+  cancelledAt     DateTime?
+  cancelReason    String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  items           OrderItem[]
+  payment         Payment?
+  loyaltyTxns     LoyaltyTransaction[]
+
+  @@map("orders")
+}
+
+// ─────────────────────────────────────
+// 5. ORDER ITEM
+// ─────────────────────────────────────
+model OrderItem {
+  id         String   @id @default(uuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  quantity   Int
+  unitPrice  Float
+  totalPrice Float
+  createdAt  DateTime @default(now())
+
+  @@map("order_items")
+}
+
+// ─────────────────────────────────────
+// 6. PAYMENT
+// ─────────────────────────────────────
+model Payment {
+  id             String        @id @default(uuid())
+  orderId        String        @unique
+  order          Order         @relation(fields: [orderId], references: [id])
+  provider       PaymentMethod
+  phoneNumber    String
+  transactionId  String?
+  externalRef    String?
+  amount         Float
+  currency       String        @default("UGX")
+  status         PaymentStatus @default(PENDING)
+  providerStatus String?
+  failureReason  String?
+  initiatedAt    DateTime      @default(now())
+  completedAt    DateTime?
+  metadata       Json?
+
+  @@map("payments")
+}
+
+// ─────────────────────────────────────
+// 7. LOYALTY TRANSACTION
+// ─────────────────────────────────────
+model LoyaltyTransaction {
+  id          String                 @id @default(uuid())
+  userId      String
+  user        User                   @relation(fields: [userId], references: [id])
+  orderId     String?
+  order       Order?                 @relation(fields: [orderId], references: [id])
+  type        LoyaltyTransactionType
+  points      Int
+  balance     Int
+  description String
+  createdAt   DateTime               @default(now())
+
+  @@map("loyalty_transactions")
+}
+
+// ─────────────────────────────────────
+// 8. REVIEW
+// ─────────────────────────────────────
+model Review {
+  id                 String   @id @default(uuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id])
+  productId          String
+  product            Product  @relation(fields: [productId], references: [id])
+  rating             Int
+  title              String?
+  body               String?  @db.Text
+  isVerifiedPurchase Boolean  @default(false)
+  isApproved         Boolean  @default(true)
+  helpfulCount       Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([userId, productId])
+  @@map("reviews")
+}
+
+// ─────────────────────────────────────
+// 9. SUPPORT TICKET
+// ─────────────────────────────────────
+model SupportTicket {
+  id           String         @id @default(uuid())
+  ticketNumber String         @unique @default(uuid())
+  userId       String
+  user         User           @relation(fields: [userId], references: [id])
+  category     TicketCategory
+  subject      String
+  status       TicketStatus   @default(OPEN)
+  priority     TicketPriority @default(MEDIUM)
+  assignedTo   String?
+  resolvedAt   DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  messages     TicketMessage[]
+
+  @@map("support_tickets")
+}
+
+// ─────────────────────────────────────
+// 10. TICKET MESSAGE
+// ─────────────────────────────────────
+model TicketMessage {
+  id            String        @id @default(uuid())
+  ticketId      String
+  ticket        SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  senderId      String
+  sender        User          @relation(fields: [senderId], references: [id])
+  senderRole    SenderRole
+  body          String        @db.Text
+  attachmentUrl String?
+  createdAt     DateTime      @default(now())
+
+  @@map("ticket_messages")
+}
+
+// ─────────────────────────────────────
+// 11. COUPON
+// ─────────────────────────────────────
+model Coupon {
+  id          String     @id @default(uuid())
+  code        String     @unique
+  type        CouponType
+  value       Float
+  minOrder    Float      @default(0)
+  maxUses     Int        @default(1)
+  usedCount   Int        @default(0)
+  isActive    Boolean    @default(true)
+  expiresAt   DateTime?
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("coupons")
+}
+
+// ─────────────────────────────────────
+// 12. WISHLIST
+// ─────────────────────────────────────
+model Wishlist {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@map("wishlists")
+}
+
+// ─────────────────────────────────────
+// 13. ADDRESS
+// ─────────────────────────────────────
+model Address {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label       String   @default("Home")
+  fullName    String
+  phone       String
+  fullAddress String
+  city        String
+  district    String
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("addresses")
+}
+
+// ─────────────────────────────────────
+// 14. FLASH SALE
+// ─────────────────────────────────────
+model FlashSale {
+  id              String   @id @default(uuid())
+  productId       String
+  product         Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  discountPercent Float
+  originalPrice   Float
+  salePrice       Float
+  startTime       DateTime
+  endTime         DateTime
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("flash_sales")
+}
+
+// ─────────────────────────────────────
+// CHAT MESSAGE
+// ─────────────────────────────────────
+model ChatMessage {
+  id         String     @id @default(uuid())
+  userId     String
+  user       User       @relation(fields: [userId], references: [id])
+  senderRole SenderRole
+  body       String     @db.Text
+  isRead     Boolean    @default(false)
+  createdAt  DateTime   @default(now())
+
+  @@map("chat_messages")
+}
