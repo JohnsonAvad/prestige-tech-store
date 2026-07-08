@@ -6,6 +6,12 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import rateLimit from 'express-rate-limit';
 
+// Routes
+import authRoutes from './routes/auth.js';
+
+// Middleware
+import { errorHandler } from './middleware/errorHandler.js';
+
 // Load environment variables
 dotenv.config();
 
@@ -20,7 +26,7 @@ const io = new Server(httpServer, {
   }
 });
 
-// ── MIDDLEWARE ──
+// ── MIDDLEWARE ──────────────────────────────────────────
 app.use(helmet());
 app.use(cors({
   origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:5173'],
@@ -33,15 +39,15 @@ app.use(express.urlencoded({ extended: true }));
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
-  message: { error: 'Too many requests, please try again later.' }
+  message: { error: 'Too many requests. Please try again later.' }
 });
 app.use('/api', limiter);
 
-// ── HEALTH CHECK ──
+// ── HEALTH CHECK ────────────────────────────────────────
 app.get('/', (req, res) => {
   res.json({
     status: 'ok',
-    message: 'TechStore API is running',
+    message: 'Prestige TechStore API is running',
     version: '1.0.0',
     timestamp: new Date().toISOString()
   });
@@ -50,21 +56,25 @@ app.get('/', (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'healthy',
-    database: 'connected',
     timestamp: new Date().toISOString()
   });
 });
 
-// ── SOCKET.IO ──
+// ── ROUTES ──────────────────────────────────────────────
+app.use('/api/auth', authRoutes);
+
+// ── SOCKET.IO ───────────────────────────────────────────
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id);
-
   socket.on('disconnect', () => {
     console.log('Client disconnected:', socket.id);
   });
 });
 
-// ── 404 HANDLER ──
+// ── ERROR HANDLER (must be last) ────────────────────────
+app.use(errorHandler);
+
+// ── 404 HANDLER ─────────────────────────────────────────
 app.use('*', (req, res) => {
   res.status(404).json({
     error: 'Route not found',
@@ -72,23 +82,15 @@ app.use('*', (req, res) => {
   });
 });
 
-// ── ERROR HANDLER ──
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({
-    error: err.message || 'Internal server error'
-  });
-});
-
-// ── START SERVER ──
+// ── START SERVER ────────────────────────────────────────
 const PORT = process.env.PORT || 3000;
 httpServer.listen(PORT, () => {
   console.log(`
-  ╔════════════════════════════════════╗
-  ║   TechStore API — Running          ║
-  ║   Port: ${PORT}                       ║
-  ║   Environment: ${process.env.NODE_ENV || 'development'}         ║
-  ╚════════════════════════════════════╝
+  ╔════════════════════════════════════════╗
+  ║   Prestige TechStore API               ║
+  ║   Running on port ${PORT}                 ║
+  ║   Environment: ${process.env.NODE_ENV}        ║
+  ╚════════════════════════════════════════╝
   `);
 });
 
