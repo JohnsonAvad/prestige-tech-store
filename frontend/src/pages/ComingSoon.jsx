@@ -24,7 +24,6 @@ function useCountdown(targetDate) {
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft())
     }, 1000)
-
     return () => clearInterval(timer)
   }, [])
 
@@ -51,8 +50,7 @@ export default function ComingSoon() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const launchDate = new Date()
-  launchDate.setDate(launchDate.getDate() + 25)
+  const launchDate = '2025-08-13T00:00:00'
   const { days, hours, minutes, seconds } = useCountdown(launchDate)
 
   const handleSubmit = async (e) => {
@@ -100,10 +98,8 @@ export default function ComingSoon() {
         {/* Navbar buttons */}
         <div className="flex items-center gap-3">
 
-          {/* Admin Access button */}
-          
-            href="/admin/login"
-            className="flex items-center gap-2 bg-white/5 border border-white/10 text-white/50 px-4 py-2 rounded-full text-sm font-semibold hover:bg-white/10 hover:text-white transition-all duration-200">
+          {/* Admin button */}
+          <a href="/admin/login" className="flex items-center gap-2 bg-white/5 border border-white/10 text-white/50 px-4 py-2 rounded-full text-sm font-semibold hover:bg-white/10 hover:text-white transition-all duration-200">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
@@ -111,11 +107,7 @@ export default function ComingSoon() {
           </a>
 
           {/* WhatsApp button */}
-          
-            href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-500/20 transition-all duration-200">
+          <a href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-2 rounded-full text-sm font-semibold hover:bg-green-500/20 transition-all duration-200">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.524 3.655 1.435 5.163L2 22l4.837-1.435A9.953 9.953 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm4.92 13.37c-.194.547-1.14 1.048-1.566 1.102-.399.05-.902.072-1.456-.091a13.31 13.31 0 01-1.317-.487c-2.314-1-3.82-3.353-3.937-3.51-.116-.156-.95-1.264-.95-2.41s.6-1.712.814-1.945c.213-.233.464-.29.619-.29l.446.008c.143.006.335-.054.524.4.194.465.66 1.607.717 1.724.058.116.097.252.02.406-.078.155-.117.252-.232.388-.116.135-.244.302-.349.406-.116.116-.236.241-.101.473.135.232.6.99 1.288 1.603.885.787 1.631 1.03 1.864 1.146.232.116.368.097.503-.058.136-.155.582-.678.737-.91.154-.232.31-.194.522-.116.214.077 1.355.64 1.588.756.233.116.388.174.446.271.058.097.058.561-.136 1.108z" />
             </svg>
@@ -123,6 +115,7 @@ export default function ComingSoon() {
           </a>
 
         </div>
+      </nav>
 
       {/* Main content */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 md:px-12 py-12 text-center">
@@ -242,30 +235,25 @@ export default function ComingSoon() {
       <footer className="relative z-10 text-center py-8 px-6">
         <div className="flex items-center justify-center gap-6 mb-4">
 
-          <a href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-white/30 hover:text-green-400 transition-colors duration-200 text-sm font-medium">
+          <a href={`https://wa.me/${whatsappNumber}?text=${whatsappMsg}`} target="_blank" rel="noopener noreferrer" className="text-white/30 hover:text-green-400 transition-colors duration-200 text-sm font-medium">
             WhatsApp
           </a>
 
           <span className="text-white/10">·</span>
 
-          <a href="#"
-            className="text-white/30 hover:text-white transition-colors duration-200 text-sm font-medium">
+          <a href="#" className="text-white/30 hover:text-white transition-colors duration-200 text-sm font-medium">
             Facebook
           </a>
 
           <span className="text-white/10">·</span>
 
-          <a href="#"
-            className="text-white/30 hover:text-white transition-colors duration-200 text-sm font-medium">
+          <a href="#" className="text-white/30 hover:text-white transition-colors duration-200 text-sm font-medium">
             Instagram
           </a>
 
         </div>
         <p className="text-white/20 text-xs">
-          2026 Prestige TechStore · Kampala, Uganda · All rights reserved
+          2025 Prestige TechStore · Kampala, Uganda · All rights reserved
         </p>
       </footer>
 
