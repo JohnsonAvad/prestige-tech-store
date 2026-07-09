@@ -182,6 +182,26 @@ export default function ComingSoon() {
           </div>
         )}
 
+        {/* Server Status */}
+        <div className="flex flex-wrap items-center justify-center gap-3 mt-12 mb-4">
+          <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-green-400 text-xs font-semibold">Website Live</span>
+          </div>
+          <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-green-400 text-xs font-semibold">Database Connected</span>
+          </div>
+          <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-green-400 text-xs font-semibold">Security Active</span>
+          </div>
+          <div className="flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 rounded-full px-4 py-2">
+            <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+            <span className="text-blue-400 text-xs font-semibold">Payments Coming Soon</span>
+          </div>
+        </div>
+
         {/* Product categories */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 w-full max-w-3xl">
           <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center gap-2 hover:border-blue-500/30 transition-all duration-200">
