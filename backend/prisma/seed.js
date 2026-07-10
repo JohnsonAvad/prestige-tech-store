@@ -4,28 +4,37 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Seeding database...');
+  console.log('🌱 Seeding database...')
+
+  // ── DELETE EXISTING ADMIN IF EXISTS ──
+  await prisma.user.deleteMany({
+    where: {
+      OR: [
+        { email: process.env.ADMIN_EMAIL || 'admin@techstore.com' },
+        { phone: '256700000000' },
+        { phone: '256700000001' },
+      ]
+    }
+  })
 
   // ── CREATE ADMIN USER ──
   const adminPassword = await bcrypt.hash(
     process.env.ADMIN_PASSWORD || 'ChangeMe@2024!', 12
-  );
+  )
 
-  const admin = await prisma.user.upsert({
-    where: { email: process.env.ADMIN_EMAIL || 'admin@techstore.ug' },
-    update: {},
-    create: {
+  const admin = await prisma.user.create({
+    data: {
       name: process.env.ADMIN_NAME || 'Store Administrator',
-      email: process.env.ADMIN_EMAIL || 'admin@techstore.ug',
+      email: process.env.ADMIN_EMAIL || 'admin@techstore.com',
       phone: '256700000000',
       passwordHash: adminPassword,
       role: 'ADMIN',
       isEmailVerified: true,
       isPhoneVerified: true
     }
-  });
+  })
 
-  console.log('✅ Admin user created:', admin.email);
+  console.log('✅ Admin user created:', admin.email)
 
   // ── CREATE PRODUCT CATEGORIES ──
   const categories = [
@@ -39,25 +48,27 @@ async function main() {
     { name: 'Storage', slug: 'storage', description: 'SSDs, HDDs, Flash drives, Memory cards', displayOrder: 8 },
     { name: 'Power', slug: 'power', description: 'Power banks, UPS, Solar chargers', displayOrder: 9 },
     { name: 'Gaming', slug: 'gaming', description: 'Gaming mice, keyboards, headsets, controllers', displayOrder: 10 },
-  ];
+  ]
 
   for (const category of categories) {
     await prisma.category.upsert({
       where: { slug: category.slug },
       update: {},
       create: category
-    });
+    })
   }
 
-  console.log('✅ Product categories created:', categories.length);
+  console.log('✅ Product categories created:', categories.length)
 
   // ── CREATE TEST CUSTOMER ──
-  const customerPassword = await bcrypt.hash('TestCustomer@2024!', 12);
+  await prisma.user.deleteMany({
+    where: { email: 'customer@test.com' }
+  })
 
-  const customer = await prisma.user.upsert({
-    where: { email: 'customer@test.com' },
-    update: {},
-    create: {
+  const customerPassword = await bcrypt.hash('TestCustomer@2024!', 12)
+
+  const customer = await prisma.user.create({
+    data: {
       name: 'Test Customer',
       email: 'customer@test.com',
       phone: '256700000001',
@@ -66,28 +77,24 @@ async function main() {
       loyaltyPoints: 500,
       tier: 'BRONZE'
     }
-  });
+  })
 
-  console.log('✅ Test customer created:', customer.email);
-  console.log('');
-  console.log('═══════════════════════════════════════');
-  console.log('✅ Database seeded successfully!');
-  console.log('');
-  console.log('Admin Login:');
-  console.log('  Email:    admin@techstore.ug');
-  console.log('  Password: ChangeMe@2024!');
-  console.log('');
-  console.log('Test Customer Login:');
-  console.log('  Email:    customer@test.com');
-  console.log('  Password: TestCustomer@2024!');
-  console.log('═══════════════════════════════════════');
+  console.log('✅ Test customer created:', customer.email)
+  console.log('')
+  console.log('═══════════════════════════════════════')
+  console.log('✅ Database seeded successfully!')
+  console.log('')
+  console.log('Admin Login:')
+  console.log('  Email:   ', process.env.ADMIN_EMAIL || 'admin@techstore.com')
+  console.log('  Password: ChangeMe@2024!')
+  console.log('═══════════════════════════════════════')
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Seed failed:', e);
-    process.exit(1);
+    console.error('❌ Seed failed:', e)
+    process.exit(1)
   })
   .finally(async () => {
-    await prisma.$disconnect();
-  });
+    await prisma.$disconnect()
+  })
