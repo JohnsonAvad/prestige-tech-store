@@ -50,7 +50,7 @@ export default function ComingSoon() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const launchDate = '2025-08-13T00:00:00'
+  const launchDate = '2026-08-04T00:00:00'
   const { days, hours, minutes, seconds } = useCountdown(launchDate)
 
   const handleSubmit = async (e) => {
