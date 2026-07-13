@@ -1,41 +1,41 @@
- 
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const navigate = useNavigate()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError("");
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/login`,
-        { email, password }
-      )
-      const { token, user } = response.data
-      if (user.role !== 'ADMIN' && user.role !== 'SUPPORT') {
-        setError('Access denied. Admin privileges required.')
-        setLoading(false)
-        return
+        `https://prestige-tech-store-api.vercel.app/api/auth/login`,
+        { email, password },
+      );
+      const { token, user } = response.data;
+      if (user.role !== "ADMIN" && user.role !== "SUPPORT") {
+        setError("Access denied. Admin privileges required.");
+        setLoading(false);
+        return;
       }
-      localStorage.setItem('admin_token', token)
-      localStorage.setItem('admin_user', JSON.stringify(user))
-      navigate('/admin/dashboard')
+      localStorage.setItem("admin_token", token);
+      localStorage.setItem("admin_user", JSON.stringify(user));
+      navigate("/admin/dashboard");
     } catch (err) {
       setError(
-        err.response?.data?.error || 'Login failed. Please check your credentials.'
-      )
+        err.response?.data?.error ||
+          "Login failed. Please check your credentials.",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
@@ -50,8 +50,12 @@ export default function AdminLogin() {
               <span className="font-bold text-white text-xl">P</span>
             </div>
             <div className="text-left">
-              <div className="font-bold text-white text-xl leading-none">PRESTIGE</div>
-              <div className="text-xs text-white/40 tracking-widest uppercase">TechStore</div>
+              <div className="font-bold text-white text-xl leading-none">
+                PRESTIGE
+              </div>
+              <div className="text-xs text-white/40 tracking-widest uppercase">
+                TechStore
+              </div>
             </div>
           </div>
           <h1 className="text-2xl font-bold text-white">Admin Portal</h1>
@@ -97,27 +101,36 @@ export default function AdminLogin() {
               disabled={loading}
               className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white font-semibold py-3 rounded-xl hover:opacity-90 transition-all duration-200 disabled:opacity-50"
             >
-              {loading ? 'Signing in...' : 'Sign In to Admin Panel'}
+              {loading ? "Signing in..." : "Sign In to Admin Panel"}
             </button>
           </form>
           <div className="mt-6 pt-6 border-t border-white/10">
-            <p className="text-white/30 text-xs text-center mb-3">Test credentials</p>
+            <p className="text-white/30 text-xs text-center mb-3">
+              Test credentials
+            </p>
             <div className="bg-white/5 border border-white/10 rounded-xl p-3 space-y-1">
               <p className="text-white/50 text-xs">
-                Email: <span className="text-white/80 font-mono">admin@techstore.com</span>
+                Email:{" "}
+                <span className="text-white/80 font-mono">
+                  admin@techstore.com
+                </span>
               </p>
               <p className="text-white/50 text-xs">
-                Password: <span className="text-white/80 font-mono">ChangeMe@2024!</span>
+                Password:{" "}
+                <span className="text-white/80 font-mono">ChangeMe@2024!</span>
               </p>
             </div>
           </div>
         </div>
         <p className="text-center mt-6">
-          <a href="/" className="text-white/30 hover:text-white/60 text-sm transition-colors duration-200">
+          <a
+            href="/"
+            className="text-white/30 hover:text-white/60 text-sm transition-colors duration-200"
+          >
             Back to website
           </a>
         </p>
       </div>
     </div>
-  )
+  );
 }
