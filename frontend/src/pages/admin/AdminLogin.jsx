@@ -104,7 +104,7 @@ export default function AdminLogin() {
             <p className="text-white/30 text-xs text-center mb-3">Test credentials</p>
             <div className="bg-white/5 border border-white/10 rounded-xl p-3 space-y-1">
               <p className="text-white/50 text-xs">
-                Email: <span className="text-white/80 font-mono">admin@techstore.ug</span>
+                Email: <span className="text-white/80 font-mono">admin@techstore.com</span>
               </p>
               <p className="text-white/50 text-xs">
                 Password: <span className="text-white/80 font-mono">ChangeMe@2024!</span>
