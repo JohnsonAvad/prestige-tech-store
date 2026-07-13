@@ -7,48 +7,46 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-  e.preventDefault()
-  setLoading(true)
-  setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-  const apiUrl = `https://prestige-tech-store-api.vercel.app/api/auth/login`
-  console.log('Calling URL:', apiUrl)
-  console.log('Email:', email)
-  console.log('Password length:', password.length)
+    const apiUrl = `https://prestige-tech-store-api.vercel.app/api/auth/login`;
+    console.log("Calling URL:", apiUrl);
+    console.log("Email:", email);
+    console.log("Password length:", password.length);
 
-  try {
-    const response = await axios.post(apiUrl, { email, password })
-    console.log('Response:', response.data)
+    try {
+      const response = await axios.post(apiUrl, { email, password });
+      console.log("Response:", response.data);
 
-    const { token, user } = response.data
+      const { token, user } = response.data;
 
-    console.log('User role:', user.role)
+      console.log("User role:", user.role);
 
-    if (user.role !== 'ADMIN' && user.role !== 'SUPPORT') {
-      setError('Access denied. Admin privileges required.')
-      setLoading(false)
-      return
+      if (user.role !== "ADMIN" && user.role !== "SUPPORT") {
+        setError("Access denied. Admin privileges required.");
+        setLoading(false);
+        return;
+      }
+
+      localStorage.setItem("admin_token", token);
+      localStorage.setItem("admin_user", JSON.stringify(user));
+      navigate("/admin/dashboard");
+    } catch (err) {
+      console.log("Error status:", err.response?.status);
+      console.log("Error data:", err.response?.data);
+      console.log("Error message:", err.message);
+      console.log("Full error:", err);
+      setError(err.response?.data?.error || err.message || "Login failed.");
+    } finally {
+      setLoading(false);
     }
-
-    localStorage.setItem('admin_token', token)
-    localStorage.setItem('admin_user', JSON.stringify(user))
-    navigate('/admin/dashboard')
-
-  } catch (err) {
-    console.log('Error status:', err.response?.status)
-    console.log('Error data:', err.response?.data)
-    console.log('Error message:', err.message)
-    console.log('Full error:', err)
-    setError(
-      err.response?.data?.error || err.message || 'Login failed.'
-    )
-  } finally {
-    setLoading(false)
-  }
-}
+  };
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
