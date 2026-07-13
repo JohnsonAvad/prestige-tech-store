@@ -116,20 +116,31 @@ export default function AdminLogin() {
             </button>
           </form>
           <div className="mt-6 pt-6 border-t border-white/10">
-            <p className="text-white/30 text-xs text-center mb-3">
-              Test credentials
-            </p>
-            <div className="bg-white/5 border border-white/10 rounded-xl p-3 space-y-1">
-              <p className="text-white/50 text-xs">
-                Email:{" "}
-                <span className="text-white/80 font-mono">
-                  admin@techstore.com
-                </span>
+            <div className="text-center space-y-3">
+              <p className="text-white/80 text-xs font-bold tracking-widest uppercase">
+                Prestige TechStore Admin Portal
               </p>
-              <p className="text-white/50 text-xs">
-                Password:{" "}
-                <span className="text-white/80 font-mono">ChangeMe@2024!</span>
+              <p className="text-white/30 text-xs leading-relaxed">
+                This is a secured management portal. 
+                Unauthorised access is strictly prohibited. 
+                All login activity is monitored and logged.
               </p>
+              <div className="flex items-center justify-center gap-4 pt-1">
+                <div className="flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                  <span className="text-white/30 text-xs">Systems Online</span>
+                </div>
+                <span className="text-white/10">·</span>
+                <div className="flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
+                  <span className="text-white/30 text-xs">Secured Portal</span>
+                </div>
+                <span className="text-white/10">·</span>
+                <div className="flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                  <span className="text-white/30 text-xs">Database Live</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
