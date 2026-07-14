@@ -38,18 +38,19 @@ async function main() {
 
   // ── CREATE PRODUCT CATEGORIES ──
   const categories = [
-    { name: 'Laptops', slug: 'laptops', description: 'HP, Dell, Lenovo, Apple MacBooks', displayOrder: 1 },
-    { name: 'Smartphones', slug: 'smartphones', description: 'iPhones, Samsung, Tecno, Infinix', displayOrder: 2 },
-    { name: 'Monitors', slug: 'monitors', description: '4K, Gaming, Ultrawide monitors', displayOrder: 3 },
-    { name: 'Accessories', slug: 'accessories', description: 'Keyboards, mice, headsets, webcams', displayOrder: 4 },
-    { name: 'Cameras', slug: 'cameras', description: 'DSLR, Mirrorless, Action cameras, Drones', displayOrder: 5 },
-    { name: 'Tablets', slug: 'tablets', description: 'iPad, Samsung Galaxy Tab, Lenovo', displayOrder: 6 },
-    { name: 'Networking', slug: 'networking', description: 'Routers, switches, network cables', displayOrder: 7 },
-    { name: 'Storage', slug: 'storage', description: 'SSDs, HDDs, Flash drives, Memory cards', displayOrder: 8 },
-    { name: 'Power', slug: 'power', description: 'Power banks, UPS, Solar chargers', displayOrder: 9 },
-    { name: 'Gaming', slug: 'gaming', description: 'Gaming mice, keyboards, headsets, controllers', displayOrder: 10 },
-  ]
-
+  { name: 'Laptops', slug: 'laptops', description: 'HP, Dell, Lenovo, Apple MacBooks', displayOrder: 1 },
+  { name: 'Smartphones', slug: 'smartphones', description: 'iPhones, Samsung, Tecno, Infinix', displayOrder: 2 },
+  { name: 'Monitors', slug: 'monitors', description: '4K, Gaming, Ultrawide monitors', displayOrder: 3 },
+  { name: 'Cameras', slug: 'cameras', description: 'DSLR, Mirrorless, Action cameras, Drones', displayOrder: 4 },
+  { name: 'Tablets', slug: 'tablets', description: 'iPad, Samsung Galaxy Tab, Lenovo', displayOrder: 5 },
+  { name: 'Headphones', slug: 'headphones', description: 'Wireless, Noise cancelling, Gaming headsets', displayOrder: 6 },
+  { name: 'Smartwatches', slug: 'smartwatches', description: 'Apple Watch, Samsung Galaxy Watch, Garmin', displayOrder: 7 },
+  { name: 'Power Banks', slug: 'power-banks', description: 'Fast charging, Solar, High capacity power banks', displayOrder: 8 },
+  { name: 'Accessories', slug: 'accessories', description: 'Keyboards, mice, cables, chargers', displayOrder: 9 },
+  { name: 'Networking', slug: 'networking', description: 'Routers, switches, network cables', displayOrder: 10 },
+  { name: 'Storage', slug: 'storage', description: 'SSDs, HDDs, Flash drives, Memory cards', displayOrder: 11 },
+  { name: 'Gaming', slug: 'gaming', description: 'Gaming mice, keyboards, headsets, controllers', displayOrder: 12 },
+]
   for (const category of categories) {
     await prisma.category.upsert({
       where: { slug: category.slug },
