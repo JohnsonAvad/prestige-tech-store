@@ -4,6 +4,7 @@ import Navbar from '../../components/shared/Navbar'
 import Footer from '../../components/shared/Footer'
 import ImageGallery from '../../components/shop/ImageGallery'
 import ProductGrid from '../../components/shop/ProductGrid'
+import CartDrawer from '../../components/shop/CartDrawer'
 import useCartStore from '../../store/cartStore'
 import api from '../../utils/api'
 import { formatPrice, formatDate } from '../../utils/formatters'
@@ -69,6 +70,7 @@ export default function ProductPage() {
     return (
       <div className="min-h-screen bg-gray-950">
         <Navbar />
+        <CartDrawer />
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-24 text-center">
           <span className="text-6xl mb-4 block">😕</span>
           <h2 className="text-white font-bold text-2xl mb-2">Product not found</h2>

@@ -6,11 +6,13 @@ import FeaturedProducts from '../../components/shop/FeaturedProducts'
 import BrandStrip from '../../components/shop/BrandStrip'
 import NewArrivals from '../../components/shop/NewArrivals'
 import Newsletter from '../../components/shop/Newsletter'
+import CartDrawer from '../../components/shop/CartDrawer'
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-950">
       <Navbar />
+      <CartDrawer />
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 space-y-12">
         <HeroBanner />
         <CategoryGrid />

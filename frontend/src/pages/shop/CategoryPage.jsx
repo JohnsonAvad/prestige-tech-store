@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useSearchParams, Link } from 'react-router-dom'
+import CartDrawer from '../../components/shop/CartDrawer'
 import Navbar from '../../components/shared/Navbar'
 import Footer from '../../components/shared/Footer'
 import ProductGrid from '../../components/shop/ProductGrid'
@@ -73,6 +74,7 @@ export default function CategoryPage() {
   return (
     <div className="min-h-screen bg-gray-950">
       <Navbar />
+      <CartDrawer/>
 
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-6">
 
