@@ -6,6 +6,9 @@ import ProductPage from './pages/shop/ProductPage'
 import SearchPage from './pages/shop/SearchPage'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminProducts from './pages/admin/AdminProducts'
+import AddProduct from './pages/admin/AddProduct'
+import CSVImport from './pages/admin/CSVImport'
 
 function App() {
   return (
@@ -18,6 +21,10 @@ function App() {
         <Route path="/search" element={<SearchPage />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="*" element={<Home />} />
+        <Route path="/admin/products" element={<AdminProducts />} />
+        <Route path="/admin/products/add" element={<AddProduct />} />
+        <Route path="/admin/products/import" element={<CSVImport />} />
         <Route path="*" element={<Home />} />
       </Routes>
     </Router>

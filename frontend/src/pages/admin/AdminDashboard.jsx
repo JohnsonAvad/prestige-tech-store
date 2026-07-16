@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
+
 
 export default function AdminDashboard() {
   const [user, setUser] = useState(null)
@@ -86,6 +87,25 @@ export default function AdminDashboard() {
             </div>
           ))}
         </div>
+
+        {/* Quick Actions */}
+<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+  {[
+    { label: 'Add Product', icon: '➕', to: '/admin/products/add', color: 'blue' },
+    { label: 'All Products', icon: '📦', to: '/admin/products', color: 'green' },
+    { label: 'Import CSV', icon: '📥', to: '/admin/products/import', color: 'purple' },
+    { label: 'View Store', icon: '🏪', to: '/', color: 'teal' },
+  ].map((action) => (
+    <Link
+      key={action.label}
+      to={action.to}
+      className="bg-white/5 border border-white/10 rounded-2xl p-4 flex flex-col items-center gap-2 hover:border-blue-500/30 hover:bg-white/10 transition-all duration-200"
+    >
+      <span className="text-3xl">{action.icon}</span>
+      <span className="text-white/60 text-xs font-semibold text-center">{action.label}</span>
+    </Link>
+  ))}
+</div>
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-6">
           <h2 className="text-white font-bold text-lg mb-4">Features Being Built</h2>
           <div className="space-y-3">
