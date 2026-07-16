@@ -4,8 +4,9 @@ import helmet from 'helmet'
 import dotenv from 'dotenv'
 import rateLimit from 'express-rate-limit'
 import authRoutes from './routes/auth.js'
+import productRoutes from './routes/products.js'
+import categoryRoutes from './routes/categories.js'
 import { errorHandler } from './middleware/errorHandler.js'
-
 dotenv.config()
 
 const app = express()
@@ -42,6 +43,8 @@ app.get('/api/health', (req, res) => {
 })
 
 app.use('/api/auth', authRoutes)
+app.use('/api/products', productRoutes)
+app.use('/api/categories', categoryRoutes)
 
 app.use(errorHandler)
 
