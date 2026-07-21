@@ -1,124 +1,78 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import api from '../../utils/api'
 import { formatPrice } from '../../utils/formatters'
 import useCartStore from '../../store/cartStore'
-import api from '../../utils/api'
-
-function ProductCard({ product }) {
-  const { addItem } = useCartStore()
-  const discount = product.comparePrice
-    ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)
-    : 0
-
-  return (
-    <div className="group bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden hover:shadow-md hover:border-blue-100 transition-all duration-300">
-      <Link to={`/product/${product.slug || product.id}`} className="block relative">
-        <div className="h-44 bg-white overflow-hidden p-3 flex items-center justify-center">
-          {product.images?.[0] ? (
-            <img
-              src={product.images[0]}
-              alt={product.name}
-              className="h-full w-full object-contain group-hover:scale-105 transition-transform duration-500"
-              loading="lazy"
-            />
-          ) : (
-            <svg className="w-12 h-12 text-gray-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-              <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
-            </svg>
-          )}
-        </div>
-        {discount > 0 && (
-          <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-lg">
-            -{discount}%
-          </span>
-        )}
-      </Link>
-
-      <div className="p-3">
-        <p className="text-gray-400 text-xs font-medium mb-1">{product.brand}</p>
-        <Link to={`/product/${product.slug || product.id}`}>
-          <h3 className="text-gray-800 text-xs font-semibold leading-tight mb-2 line-clamp-2 hover:text-blue-600 transition-colors">
-            {product.name}
-          </h3>
-        </Link>
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-gray-900 font-black text-sm">{formatPrice(product.price)}</span>
-          {product.comparePrice && (
-            <span className="text-gray-300 text-xs line-through">{formatPrice(product.comparePrice)}</span>
-          )}
-        </div>
-        <button
-          onClick={() => addItem(product)}
-          disabled={product.stock === 0}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-100 disabled:text-gray-400 text-white text-xs font-bold py-2 rounded-xl transition-all duration-200"
-        >
-          {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
-        </button>
-      </div>
-    </div>
-  )
-}
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const { addItem } = useCartStore()
 
   useEffect(() => {
     api.get('/products?isFeatured=true&limit=8')
       .then(res => setProducts(res.data.products || []))
-      .catch(err => setError(err.message))
+      .catch(() => setProducts([]))
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) {
-    return (
-      <section>
-        <h2 className="text-xl md:text-2xl font-black text-gray-900 mb-6">Featured Products</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden animate-pulse">
-              <div className="h-44 bg-gray-100" />
-              <div className="p-3 space-y-2">
-                <div className="h-3 bg-gray-100 rounded w-1/3" />
-                <div className="h-3 bg-gray-100 rounded" />
-                <div className="h-7 bg-gray-100 rounded mt-2" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    )
-  }
-
-  if (error) {
-    return (
-      <section>
-        <h2 className="text-xl md:text-2xl font-black text-gray-900 mb-4">Featured Products</h2>
-        <div className="bg-red-50 border border-red-100 rounded-xl p-4">
-          <p className="text-red-500 text-sm">Could not load products. Make sure backend is running.</p>
-        </div>
-      </section>
-    )
-  }
+  if (loading) return (
+    <section style={{ background: '#f8fafc', borderRadius: '24px', padding: '32px' }}>
+      <div style={{ fontSize: '22px', fontWeight: 900, color: '#0f172a', marginBottom: '24px' }}>Featured Products</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0' }}>
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} style={{ padding: '16px' }}>
+            <div style={{ height: '130px', background: '#e2e8f0', borderRadius: '12px', marginBottom: '10px' }} />
+            <div style={{ height: '10px', background: '#e2e8f0', borderRadius: '5px', marginBottom: '6px', width: '50%' }} />
+            <div style={{ height: '12px', background: '#e2e8f0', borderRadius: '5px' }} />
+          </div>
+        ))}
+      </div>
+    </section>
+  )
 
   if (products.length === 0) return null
 
   return (
-    <section>
-      <div className="flex items-center justify-between mb-6">
+    <section style={{ background: '#f8fafc', borderRadius: '24px', padding: '32px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div>
-          <h2 className="text-xl md:text-2xl font-black text-gray-900">Featured Products</h2>
-          <p className="text-gray-400 text-sm mt-1">Handpicked for you</p>
+          <div style={{ fontSize: '22px', fontWeight: 900, color: '#0f172a' }}>Featured Products</div>
+          <div style={{ fontSize: '13px', color: '#94a3b8', marginTop: '4px' }}>Handpicked for you</div>
         </div>
-        <Link to="/products" className="text-blue-600 hover:text-blue-700 text-sm font-semibold transition-colors">
-          View all →
-        </Link>
+        <Link to="/products" style={{ fontSize: '13px', fontWeight: 700, color: '#16a34a', textDecoration: 'none' }}>View all →</Link>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {products.map(product => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0' }}>
+        {products.map(product => {
+          const discount = product.comparePrice ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100) : 0
+          return (
+            <div key={product.id} style={{ padding: '12px', cursor: 'pointer', borderRadius: '16px', transition: 'background 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.background = 'white'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              <Link to={`/product/${product.slug || product.id}`} style={{ textDecoration: 'none' }}>
+                <div style={{ height: '140px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', marginBottom: '12px' }}>
+                  {product.images?.[0] ? (
+                    <img src={product.images[0]} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.08))', transition: 'transform 0.3s' }}
+                      onMouseEnter={e => e.target.style.transform = 'translateY(-3px)'}
+                      onMouseLeave={e => e.target.style.transform = 'translateY(0)'}
+                    />
+                  ) : (
+                    <div style={{ width: '60px', height: '60px', background: '#e2e8f0', borderRadius: '10px' }} />
+                  )}
+                  {discount > 0 && <span style={{ position: 'absolute', top: 0, left: 0, background: '#ef4444', color: 'white', fontSize: '8px', fontWeight: 900, padding: '2px 7px', borderRadius: '5px' }}>-{discount}%</span>}
+                </div>
+                <div style={{ fontSize: '9px', color: '#94a3b8', fontWeight: 600, marginBottom: '3px' }}>{product.brand}</div>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: '#1e293b', lineHeight: 1.3, marginBottom: '6px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{product.name}</div>
+                <div style={{ fontSize: '13px', fontWeight: 900, color: '#0f172a', marginBottom: '8px' }}>{formatPrice(product.price)}</div>
+              </Link>
+              <button onClick={() => addItem(product)} style={{ width: '100%', background: '#2563eb', color: 'white', fontSize: '10px', fontWeight: 700, padding: '9px', borderRadius: '9px', border: 'none', cursor: 'pointer' }}>
+                Add to Cart
+              </button>
+            </div>
+          )
+        })}
       </div>
     </section>
   )

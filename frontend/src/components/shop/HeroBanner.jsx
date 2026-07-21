@@ -5,180 +5,138 @@ const SLIDES = [
   {
     id: 1,
     badge: 'New Arrival',
-    badgeColor: 'bg-blue-100 text-blue-700',
+    badgeBg: '#dbeafe',
+    badgeColor: '#1d4ed8',
     title: 'iPhone 15',
-    titleAccent: 'Pro Max',
-    accentColor: 'text-blue-600',
-    subtitle: 'Titanium · A17 Pro · 48MP Camera',
-    description: 'Pay with MTN MoMo or Airtel Money.',
-    cta: 'Shop Now',
-    ctaLink: '/category/smartphones',
+    accent: 'Pro Max',
+    accentColor: '#2563eb',
+    sub: 'Titanium · A17 Pro · 48MP Camera',
+    desc: 'Pay with MTN MoMo or Airtel Money. Same-day delivery in Kampala.',
     price: 'UGX 4,200,000',
-    priceColor: 'text-blue-600',
-    bgColor: 'bg-blue-50',
-    blobColor: 'bg-blue-200',
-    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=500&q=80',
+    priceColor: '#2563eb',
+    bg: 'linear-gradient(135deg, #eff6ff 0%, #f0f9ff 60%, #ffffff 100%)',
+    blob: '#bfdbfe',
+    cta: 'Shop Now',
+    link: '/category/smartphones',
+    img: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&q=90',
   },
   {
     id: 2,
     badge: 'Best Seller',
-    badgeColor: 'bg-green-100 text-green-700',
+    badgeBg: '#dcfce7',
+    badgeColor: '#166534',
     title: 'Samsung Galaxy',
-    titleAccent: 'S24 Ultra',
-    accentColor: 'text-green-600',
-    subtitle: '200MP Camera · Built-in S Pen',
-    description: 'Uganda\'s most advanced Android phone.',
-    cta: 'View Deal',
-    ctaLink: '/category/smartphones',
+    accent: 'S24 Ultra',
+    accentColor: '#16a34a',
+    sub: '200MP Camera · Built-in S Pen · AI Features',
+    desc: "Uganda's most advanced Android smartphone. In stock now.",
     price: 'UGX 3,200,000',
-    priceColor: 'text-green-600',
-    bgColor: 'bg-green-50',
-    blobColor: 'bg-green-200',
-    image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500&q=80',
+    priceColor: '#16a34a',
+    bg: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 60%, #ffffff 100%)',
+    blob: '#bbf7d0',
+    cta: 'View Deal',
+    link: '/category/smartphones',
+    img: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&q=90',
   },
   {
     id: 3,
     badge: 'Professional',
-    badgeColor: 'bg-slate-100 text-slate-700',
+    badgeBg: '#f1f5f9',
+    badgeColor: '#475569',
     title: 'MacBook Pro',
-    titleAccent: 'M3 Chip',
-    accentColor: 'text-slate-700',
-    subtitle: 'The most powerful Mac ever built',
-    description: 'For creators and professionals in Uganda.',
-    cta: 'Explore',
-    ctaLink: '/category/laptops',
+    accent: 'M3 Chip',
+    accentColor: '#334155',
+    sub: 'The most powerful Mac ever built',
+    desc: 'For creators, developers and professionals in Uganda.',
     price: 'UGX 4,500,000',
-    priceColor: 'text-slate-700',
-    bgColor: 'bg-slate-50',
-    blobColor: 'bg-slate-200',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&q=80',
+    priceColor: '#334155',
+    bg: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 60%, #ffffff 100%)',
+    blob: '#e2e8f0',
+    cta: 'Explore',
+    link: '/category/laptops',
+    img: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&q=90',
   },
 ]
 
 export default function HeroBanner() {
-  const [current, setCurrent] = useState(0)
+  const [cur, setCur] = useState(0)
   const [fading, setFading] = useState(false)
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    const t = setInterval(() => {
       setFading(true)
-      setTimeout(() => {
-        setCurrent(prev => (prev + 1) % SLIDES.length)
-        setFading(false)
-      }, 350)
-    }, 5000)
-    return () => clearInterval(timer)
+      setTimeout(() => { setCur(p => (p + 1) % SLIDES.length); setFading(false) }, 400)
+    }, 5500)
+    return () => clearInterval(t)
   }, [])
 
-  const goTo = (index) => {
-    if (index === current) return
+  const goTo = (i) => {
+    if (i === cur) return
     setFading(true)
-    setTimeout(() => {
-      setCurrent(index)
-      setFading(false)
-    }, 350)
+    setTimeout(() => { setCur(i); setFading(false) }, 400)
   }
 
-  const slide = SLIDES[current]
+  const s = SLIDES[cur]
 
   return (
-    <div className={`relative w-full overflow-hidden ${slide.bgColor} transition-colors duration-700`}
-      style={{ minHeight: '480px' }}
-    >
+    <div style={{ background: s.bg, minHeight: '520px', position: 'relative', overflow: 'hidden', transition: 'background 0.6s ease' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 48px', display: 'flex', alignItems: 'center', minHeight: '520px', opacity: fading ? 0 : 1, transition: 'opacity 0.4s ease' }}>
 
-      <div className={`max-w-7xl mx-auto px-6 md:px-12 flex items-center transition-opacity duration-350 ${fading ? 'opacity-0' : 'opacity-100'}`}
-        style={{ minHeight: '480px' }}
-      >
-
-        {/* Left — Text */}
-        <div className="flex-1 py-16 pr-8 z-10">
-
-          <span className={`inline-block ${slide.badgeColor} text-xs font-black px-4 py-1.5 rounded-full mb-6 uppercase tracking-widest`}>
-            {slide.badge}
+        {/* LEFT — text */}
+        <div style={{ flex: '0 0 45%', paddingRight: '48px', zIndex: 2 }}>
+          <span style={{ display: 'inline-block', background: s.badgeBg, color: s.badgeColor, fontSize: '11px', fontWeight: 900, padding: '6px 16px', borderRadius: '20px', marginBottom: '20px', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
+            {s.badge}
           </span>
 
-          <h1 className="text-5xl md:text-7xl font-black text-gray-900 leading-none mb-3">
-            {slide.title}
-            <span className={`block ${slide.accentColor} mt-1`}>
-              {slide.titleAccent}
-            </span>
-          </h1>
-
-          <p className="text-gray-500 text-base md:text-lg font-medium mb-1 mt-4">
-            {slide.subtitle}
-          </p>
-          <p className="text-gray-400 text-sm mb-6">
-            {slide.description}
-          </p>
-
-          <p className={`text-3xl font-black ${slide.priceColor} mb-8`}>
-            {slide.price}
-          </p>
-
-          <div className="flex items-center gap-4">
-            <Link
-              to={slide.ctaLink}
-              className="inline-flex items-center gap-2 bg-gray-900 text-white font-black px-8 py-4 rounded-2xl hover:bg-gray-700 transition-all duration-200 text-sm"
-            >
-              {slide.cta}
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </Link>
-            <Link
-              to={slide.ctaLink}
-              className="text-gray-400 hover:text-gray-600 text-sm font-semibold transition-colors"
-            >
-              Browse all →
-            </Link>
+          <div style={{ fontSize: '60px', fontWeight: 900, color: '#0f172a', lineHeight: 1, marginBottom: '4px' }}>
+            {s.title}
+          </div>
+          <div style={{ fontSize: '60px', fontWeight: 900, color: s.accentColor, lineHeight: 1, marginBottom: '20px' }}>
+            {s.accent}
           </div>
 
+          <div style={{ fontSize: '16px', color: '#64748b', fontWeight: 500, marginBottom: '6px' }}>
+            {s.sub}
+          </div>
+          <div style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '20px' }}>
+            {s.desc}
+          </div>
+
+          <div style={{ fontSize: '32px', fontWeight: 900, color: s.priceColor, marginBottom: '28px' }}>
+            {s.price}
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <Link to={s.link} style={{ background: '#0f172a', color: 'white', fontSize: '13px', fontWeight: 900, padding: '14px 32px', borderRadius: '14px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              {s.cta} →
+            </Link>
+            <Link to={s.link} style={{ color: '#94a3b8', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}>
+              Browse all
+            </Link>
+          </div>
         </div>
 
-        {/* Right — Product floating completely free in space */}
-        <div className="hidden md:flex flex-1 items-center justify-center relative py-8">
-
-          {/* Decorative blob behind product — NOT a box */}
-          <div
-            className={`absolute w-80 h-80 ${slide.blobColor} rounded-full opacity-40 blur-3xl`}
-            style={{ right: '10%', top: '50%', transform: 'translateY(-50%)' }}
-          />
-
-          {/* Product image — pure floating, no container */}
+        {/* RIGHT — product completely free in space, no box */}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', height: '520px' }}>
+          {/* decorative blob behind product */}
+          <div style={{ position: 'absolute', width: '380px', height: '380px', borderRadius: '50%', background: s.blob, opacity: 0.5, filter: 'blur(70px)', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
+          {/* product image — pure float, zero container */}
           <img
-            src={slide.image}
-            alt={slide.title}
-            className="relative z-10 object-contain transition-all duration-500"
-            style={{
-              width: '320px',
-              height: '380px',
-              objectFit: 'contain',
-              filter: 'drop-shadow(0 30px 60px rgba(0,0,0,0.12))',
-            }}
+            src={s.img}
+            alt={s.title}
+            style={{ position: 'relative', zIndex: 2, width: '420px', height: '460px', objectFit: 'contain', filter: 'drop-shadow(0 40px 80px rgba(0,0,0,0.15))', transition: 'all 0.5s ease' }}
           />
-
         </div>
 
       </div>
 
-      {/* Navigation dots — bottom left */}
-      <div className="absolute bottom-8 left-6 md:left-12 flex items-center gap-3">
+      {/* dots */}
+      <div style={{ position: 'absolute', bottom: '28px', left: '48px', display: 'flex', alignItems: 'center', gap: '10px' }}>
         {SLIDES.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => goTo(i)}
-            className={`transition-all duration-300 rounded-full ${
-              i === current
-                ? 'w-8 h-2.5 bg-gray-900'
-                : 'w-2.5 h-2.5 bg-gray-300 hover:bg-gray-400'
-            }`}
-          />
+          <button key={i} onClick={() => goTo(i)} style={{ border: 'none', cursor: 'pointer', background: i === cur ? '#0f172a' : '#cbd5e1', height: '9px', width: i === cur ? '28px' : '9px', borderRadius: '5px', transition: 'all 0.3s', padding: 0 }} />
         ))}
-        <span className="text-gray-400 text-xs font-medium ml-2">
-          {current + 1} / {SLIDES.length}
-        </span>
+        <span style={{ fontSize: '12px', color: '#94a3b8', marginLeft: '6px' }}>{cur + 1} / {SLIDES.length}</span>
       </div>
-
     </div>
   )
 }

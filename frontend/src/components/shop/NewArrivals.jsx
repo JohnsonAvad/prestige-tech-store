@@ -1,72 +1,15 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import api from '../../utils/api'
 import { formatPrice } from '../../utils/formatters'
 import useCartStore from '../../store/cartStore'
-import api from '../../utils/api'
-
-function ProductCard({ product }) {
-  const { addItem } = useCartStore()
-  const discount = product.comparePrice
-    ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)
-    : 0
-
-  return (
-    <div className="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-green-100 transition-all duration-300 flex-shrink-0 w-64">
-      <Link to={`/product/${product.slug || product.id}`} className="block relative">
-        <div className="h-52 bg-gray-50 overflow-hidden p-4 flex items-center justify-center">
-          {product.images?.[0] ? (
-            <img
-              src={product.images[0]}
-              alt={product.name}
-              className="h-full w-full object-contain group-hover:scale-105 transition-transform duration-500"
-              loading="lazy"
-            />
-          ) : (
-            <svg className="w-16 h-16 text-gray-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-              <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
-            </svg>
-          )}
-        </div>
-        {discount > 0 && (
-          <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-lg">
-            -{discount}%
-          </span>
-        )}
-        <span className="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-lg">
-          New
-        </span>
-      </Link>
-
-      <div className="p-4">
-        <p className="text-gray-400 text-xs font-medium mb-1">{product.brand}</p>
-        <Link to={`/product/${product.slug || product.id}`}>
-          <h3 className="text-gray-800 text-sm font-semibold leading-tight mb-3 line-clamp-2 hover:text-green-600 transition-colors">
-            {product.name}
-          </h3>
-        </Link>
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-gray-900 font-black text-base">{formatPrice(product.price)}</span>
-          {product.comparePrice && (
-            <span className="text-gray-300 text-xs line-through">{formatPrice(product.comparePrice)}</span>
-          )}
-        </div>
-        <button
-          onClick={() => addItem(product)}
-          disabled={product.stock === 0}
-          className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-100 disabled:text-gray-400 text-white text-xs font-bold py-2.5 rounded-xl transition-all duration-200"
-        >
-          {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
-        </button>
-      </div>
-    </div>
-  )
-}
 
 export default function NewArrivals() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(0)
-  const itemsPerPage = 4
+  const { addItem } = useCartStore()
+  const perPage = 4
 
   useEffect(() => {
     api.get('/products?isNewArrival=true&limit=20')
@@ -75,81 +18,84 @@ export default function NewArrivals() {
       .finally(() => setLoading(false))
   }, [])
 
-  const totalPages = Math.ceil(products.length / itemsPerPage)
-  const visible = products.slice(page * itemsPerPage, (page + 1) * itemsPerPage)
+  const total = Math.ceil(products.length / perPage)
+  const visible = products.slice(page * perPage, (page + 1) * perPage)
 
-  if (loading) {
-    return (
-      <section className="py-2">
-        <h2 className="text-xl md:text-2xl font-black text-gray-900 mb-6">New Arrivals</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-white border border-gray-100 rounded-2xl overflow-hidden animate-pulse">
-              <div className="h-52 bg-gray-50" />
-              <div className="p-4 space-y-2">
-                <div className="h-3 bg-gray-100 rounded w-1/3" />
-                <div className="h-4 bg-gray-100 rounded" />
-                <div className="h-8 bg-gray-100 rounded mt-2" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    )
-  }
+  if (loading) return (
+    <section>
+      <div style={{ fontSize: '22px', fontWeight: 900, color: '#0f172a', marginBottom: '24px' }}>New Arrivals</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0' }}>
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} style={{ padding: '16px' }}>
+            <div style={{ height: '160px', background: '#f1f5f9', borderRadius: '12px', marginBottom: '12px', animation: 'pulse 1.5s infinite' }} />
+            <div style={{ height: '12px', background: '#f1f5f9', borderRadius: '6px', marginBottom: '8px', width: '60%' }} />
+            <div style={{ height: '14px', background: '#f1f5f9', borderRadius: '6px' }} />
+          </div>
+        ))}
+      </div>
+    </section>
+  )
 
   if (products.length === 0) return null
 
   return (
-    <section className="py-2">
-      <div className="flex items-center justify-between mb-6">
+    <section>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div>
-          <h2 className="text-xl md:text-2xl font-black text-gray-900">New Arrivals</h2>
-          <p className="text-gray-400 text-sm mt-1">Fresh stock just landed</p>
+          <div style={{ fontSize: '22px', fontWeight: 900, color: '#0f172a' }}>New Arrivals</div>
+          <div style={{ fontSize: '13px', color: '#94a3b8', marginTop: '4px' }}>Fresh stock just landed</div>
         </div>
-        <div className="flex items-center gap-3">
-          <Link to="/new-arrivals" className="text-green-600 hover:text-green-700 text-sm font-semibold transition-colors mr-4">
-            View all →
-          </Link>
-          {/* Arrows */}
-          <button
-            onClick={() => setPage(p => Math.max(0, p - 1))}
-            disabled={page === 0}
-            className="w-10 h-10 bg-white border border-gray-200 rounded-xl flex items-center justify-center text-gray-400 hover:text-green-600 hover:border-green-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button
-            onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-            disabled={page >= totalPages - 1}
-            className="w-10 h-10 bg-white border border-gray-200 rounded-xl flex items-center justify-center text-gray-400 hover:text-green-600 hover:border-green-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-          >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <Link to="/products" style={{ fontSize: '13px', fontWeight: 700, color: '#16a34a', textDecoration: 'none' }}>View all →</Link>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} style={{ width: '36px', height: '36px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '10px', cursor: page === 0 ? 'not-allowed' : 'pointer', opacity: page === 0 ? 0.4 : 1, fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>←</button>
+            <button onClick={() => setPage(p => Math.min(total - 1, p + 1))} disabled={page >= total - 1} style={{ width: '36px', height: '36px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '10px', cursor: page >= total - 1 ? 'not-allowed' : 'pointer', opacity: page >= total - 1 ? 0.4 : 1, fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>→</button>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {visible.map(product => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+      {/* Products — no boxes, free in space */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0' }}>
+        {visible.map(product => {
+          const discount = product.comparePrice ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100) : 0
+          return (
+            <div key={product.id} style={{ padding: '16px', cursor: 'pointer', borderRadius: '16px', transition: 'background 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              <Link to={`/product/${product.slug || product.id}`} style={{ textDecoration: 'none' }}>
+                <div style={{ height: '180px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', marginBottom: '14px' }}>
+                  {product.images?.[0] ? (
+                    <img src={product.images[0]} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.10))', transition: 'transform 0.3s' }}
+                      onMouseEnter={e => e.target.style.transform = 'translateY(-4px)'}
+                      onMouseLeave={e => e.target.style.transform = 'translateY(0)'}
+                    />
+                  ) : (
+                    <div style={{ width: '80px', height: '80px', background: '#f1f5f9', borderRadius: '12px' }} />
+                  )}
+                  {discount > 0 && <span style={{ position: 'absolute', top: 0, left: 0, background: '#ef4444', color: 'white', fontSize: '9px', fontWeight: 900, padding: '3px 8px', borderRadius: '6px' }}>-{discount}%</span>}
+                  {product.isNewArrival && <span style={{ position: 'absolute', top: 0, right: 0, background: '#16a34a', color: 'white', fontSize: '9px', fontWeight: 900, padding: '3px 8px', borderRadius: '6px' }}>New</span>}
+                </div>
+                <div style={{ fontSize: '10px', color: '#94a3b8', fontWeight: 600, marginBottom: '4px' }}>{product.brand}</div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b', lineHeight: 1.4, marginBottom: '8px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{product.name}</div>
+                <div style={{ fontSize: '15px', fontWeight: 900, color: '#0f172a', marginBottom: '4px' }}>
+                  {formatPrice(product.price)}
+                  {product.comparePrice && <span style={{ fontSize: '11px', color: '#cbd5e1', textDecoration: 'line-through', marginLeft: '8px', fontWeight: 400 }}>{formatPrice(product.comparePrice)}</span>}
+                </div>
+              </Link>
+              <button onClick={() => addItem(product)} style={{ width: '100%', background: '#16a34a', color: 'white', fontSize: '11px', fontWeight: 700, padding: '10px', borderRadius: '10px', border: 'none', cursor: 'pointer', marginTop: '10px' }}>
+                Add to Cart
+              </button>
+            </div>
+          )
+        })}
       </div>
 
       {/* Page dots */}
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-6">
-          {Array.from({ length: totalPages }).map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setPage(i)}
-              className={`transition-all duration-300 rounded-full ${
-                i === page ? 'w-6 h-2 bg-green-600' : 'w-2 h-2 bg-gray-200 hover:bg-gray-300'
-              }`}
-            />
+      {total > 1 && (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '20px' }}>
+          {Array.from({ length: total }).map((_, i) => (
+            <button key={i} onClick={() => setPage(i)} style={{ border: 'none', cursor: 'pointer', background: i === page ? '#16a34a' : '#e2e8f0', height: '7px', width: i === page ? '24px' : '7px', borderRadius: '4px', transition: 'all 0.3s', padding: 0 }} />
           ))}
         </div>
       )}

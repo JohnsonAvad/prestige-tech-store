@@ -2,54 +2,44 @@ import { useState } from 'react'
 
 export default function Newsletter() {
   const [email, setEmail] = useState('')
-  const [submitted, setSubmitted] = useState(false)
+  const [done, setDone] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault()
     if (!email) return
     setLoading(true)
-    await new Promise(resolve => setTimeout(resolve, 800))
-    setSubmitted(true)
+    await new Promise(r => setTimeout(r, 800))
+    setDone(true)
     setLoading(false)
   }
 
   return (
-    <section className="bg-gradient-to-r from-blue-600 to-green-600 rounded-3xl p-8 md:p-12 text-center">
-      <h2 className="text-2xl md:text-3xl font-black text-white mb-2">
-        Stay in the Loop
-      </h2>
-      <p className="text-white/80 text-sm md:text-base mb-8 max-w-md mx-auto">
-        Get exclusive deals, new arrivals and tech news delivered to your inbox.
-      </p>
-
-      {!submitted ? (
-        <form onSubmit={handleSubmit} className="flex gap-3 max-w-md mx-auto">
+    <section style={{ background: 'linear-gradient(135deg, #16a34a 0%, #2563eb 100%)', borderRadius: '24px', padding: '48px', textAlign: 'center' }}>
+      <div style={{ fontSize: '28px', fontWeight: 900, color: 'white', marginBottom: '8px' }}>Stay in the Loop</div>
+      <div style={{ fontSize: '15px', color: 'rgba(255,255,255,0.8)', marginBottom: '28px', maxWidth: '400px', margin: '0 auto 28px' }}>
+        Exclusive deals, new arrivals and tech news delivered to your inbox
+      </div>
+      {!done ? (
+        <form onSubmit={submit} style={{ display: 'flex', gap: '10px', maxWidth: '420px', margin: '0 auto' }}>
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             placeholder="Enter your email address"
             required
-            className="flex-1 bg-white/20 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-white/60 text-sm outline-none focus:bg-white/30 transition-all duration-200"
+            style={{ flex: 1, background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '12px', padding: '13px 16px', color: 'white', fontSize: '13px', outline: 'none' }}
           />
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-white text-blue-600 font-black px-6 py-3 rounded-xl hover:bg-gray-50 transition-all duration-200 disabled:opacity-50 whitespace-nowrap text-sm"
-          >
+          <button type="submit" disabled={loading} style={{ background: 'white', color: '#16a34a', fontSize: '13px', fontWeight: 900, padding: '13px 24px', borderRadius: '12px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
             {loading ? 'Joining...' : 'Subscribe'}
           </button>
         </form>
       ) : (
-        <div className="bg-white/20 border border-white/30 rounded-xl px-6 py-3 inline-block">
-          <p className="text-white font-semibold text-sm">
-            You are subscribed! Watch your inbox for exclusive deals.
-          </p>
+        <div style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '12px', padding: '14px 24px', display: 'inline-block', color: 'white', fontWeight: 600 }}>
+          You are subscribed! Watch your inbox for exclusive deals.
         </div>
       )}
-
-      <p className="text-white/40 text-xs mt-4">No spam. Unsubscribe anytime.</p>
+      <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', marginTop: '16px' }}>No spam. Unsubscribe anytime.</div>
     </section>
   )
 }

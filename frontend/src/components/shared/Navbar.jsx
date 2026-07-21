@@ -4,21 +4,19 @@ import useCartStore from '../../store/cartStore'
 import useAuthStore from '../../store/authStore'
 
 export default function Navbar() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [q, setQ] = useState('')
+  const [open, setOpen] = useState(false)
   const { getItemCount, openCart } = useCartStore()
   const { user, isAuthenticated, logout } = useAuthStore()
   const navigate = useNavigate()
-  const itemCount = getItemCount()
+  const count = getItemCount()
 
-  const handleSearch = (e) => {
+  const search = (e) => {
     e.preventDefault()
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`)
-    }
+    if (q.trim()) navigate(`/search?q=${encodeURIComponent(q)}`)
   }
 
-  const categories = [
+  const cats = [
     { name: 'Laptops', slug: 'laptops' },
     { name: 'Smartphones', slug: 'smartphones' },
     { name: 'Tablets', slug: 'tablets' },
@@ -32,133 +30,67 @@ export default function Navbar() {
   ]
 
   return (
-    <header className="sticky top-0 z-50">
-
-      {/* Green top navbar */}
-      <div className="bg-green-600">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
-          <div className="flex items-center gap-4 h-16">
-
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 shrink-0">
-              <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center">
-                <span className="font-black text-green-600 text-lg">P</span>
-              </div>
-              <div className="hidden md:block">
-                <div className="font-black text-white text-base leading-none tracking-wide">PRESTIGE</div>
-                <div className="text-green-200 text-xs tracking-widest">TECHSTORE</div>
-              </div>
-            </Link>
-
-            {/* Search bar */}
-            <form onSubmit={handleSearch} className="flex-1 max-w-2xl">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search laptops, phones, cameras..."
-                  className="w-full bg-white/20 border border-white/30 rounded-xl pl-4 pr-12 py-2.5 text-white placeholder-white/60 text-sm outline-none focus:bg-white/30 focus:border-white/60 transition-all duration-200"
-                />
-                <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="11" cy="11" r="8" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35" />
-                  </svg>
-                </button>
-              </div>
-            </form>
-
-            {/* Right actions */}
-            <div className="flex items-center gap-1 shrink-0">
-
-              {isAuthenticated ? (
-                <div className="relative group">
-                  <button className="flex items-center gap-2 text-white hover:text-green-100 transition-colors px-3 py-2 rounded-xl hover:bg-white/10">
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <span className="hidden md:inline text-sm font-medium">{user?.name?.split(' ')[0]}</span>
-                  </button>
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                    <Link to="/account/orders" className="block px-4 py-2.5 text-gray-600 hover:text-green-600 hover:bg-gray-50 text-sm">My Orders</Link>
-                    <Link to="/account/wishlist" className="block px-4 py-2.5 text-gray-600 hover:text-green-600 hover:bg-gray-50 text-sm">Wishlist</Link>
-                    <button onClick={logout} className="block w-full text-left px-4 py-2.5 text-red-500 hover:bg-gray-50 text-sm border-t border-gray-100">Logout</button>
-                  </div>
-                </div>
-              ) : (
-                <Link to="/login" className="hidden md:flex items-center gap-2 text-white hover:text-green-100 transition-colors px-3 py-2 rounded-xl hover:bg-white/10 text-sm font-medium">
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  Sign In
-                </Link>
-              )}
-
-              {/* Cart */}
-              <button
-                onClick={openCart}
-                className="relative flex items-center gap-2 text-white hover:text-green-100 transition-colors px-3 py-2 rounded-xl hover:bg-white/10"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                <span className="hidden md:inline text-sm font-medium">Cart</span>
-                {itemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                    {itemCount > 99 ? '99+' : itemCount}
-                  </span>
-                )}
-              </button>
-
-              {/* Mobile menu */}
-              <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden text-white p-2">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  {mobileMenuOpen
-                    ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                  }
-                </svg>
-              </button>
-
+    <header style={{ position: 'sticky', top: 0, zIndex: 100 }}>
+      {/* Green bar */}
+      <div style={{ background: '#16a34a' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', gap: '16px', height: '60px' }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', flexShrink: 0 }}>
+            <div style={{ width: '36px', height: '36px', background: 'white', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#16a34a', fontSize: '17px' }}>P</div>
+            <div style={{ display: 'none' }} className="md:block">
+              <div style={{ fontWeight: 900, color: 'white', fontSize: '14px', lineHeight: 1 }}>PRESTIGE</div>
+              <div style={{ color: '#bbf7d0', fontSize: '9px', letterSpacing: '2px' }}>TECHSTORE</div>
             </div>
+          </Link>
+
+          <form onSubmit={search} style={{ flex: 1, maxWidth: '500px' }}>
+            <div style={{ position: 'relative' }}>
+              <input
+                value={q}
+                onChange={e => setQ(e.target.value)}
+                placeholder="Search laptops, phones, cameras..."
+                style={{ width: '100%', background: 'rgba(255,255,255,0.18)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '12px', padding: '10px 42px 10px 16px', color: 'white', fontSize: '13px', outline: 'none' }}
+              />
+              <button type="submit" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.6)' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              </button>
+            </div>
+          </form>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginLeft: 'auto' }}>
+            {isAuthenticated ? (
+              <button style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'white', background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600, padding: '8px 12px', borderRadius: '10px' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                {user?.name?.split(' ')[0]}
+              </button>
+            ) : (
+              <Link to="/login" style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'white', textDecoration: 'none', fontSize: '13px', fontWeight: 600, padding: '8px 12px', borderRadius: '10px' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Sign In
+              </Link>
+            )}
+
+            <button onClick={openCart} style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'white', background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600, padding: '8px 12px', borderRadius: '10px', position: 'relative' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+              Cart
+              {count > 0 && <span style={{ position: 'absolute', top: '2px', right: '2px', width: '16px', height: '16px', background: '#2563eb', color: 'white', fontSize: '9px', fontWeight: 900, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{count}</span>}
+            </button>
           </div>
         </div>
       </div>
 
       {/* White category bar */}
-      <div className="bg-white border-b border-gray-100 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
-          <nav className="hidden md:flex items-center gap-1 py-2 overflow-x-auto">
-            {categories.map((cat) => (
-              <Link
-                key={cat.slug}
-                to={`/category/${cat.slug}`}
-                className="whitespace-nowrap text-gray-500 hover:text-green-600 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-green-50 transition-all duration-200"
-              >
-                {cat.name}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      </div>
-
-      {/* Mobile menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 space-y-1 shadow-lg">
-          {categories.map((cat) => (
-            <Link
-              key={cat.slug}
-              to={`/category/${cat.slug}`}
-              onClick={() => setMobileMenuOpen(false)}
-              className="block text-gray-600 hover:text-green-600 text-sm py-2 border-b border-gray-50 last:border-0"
+      <div style={{ background: 'white', borderBottom: '1px solid #f1f5f9', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px', display: 'flex', gap: '2px', height: '38px', alignItems: 'center', overflowX: 'auto' }} className="hide-scrollbar">
+          {cats.map(cat => (
+            <Link key={cat.slug} to={`/category/${cat.slug}`} style={{ whiteSpace: 'nowrap', fontSize: '12px', fontWeight: 600, color: '#64748b', padding: '5px 12px', borderRadius: '8px', textDecoration: 'none', transition: 'all 0.2s' }}
+              onMouseEnter={e => { e.target.style.color = '#16a34a'; e.target.style.background = '#f0fdf4' }}
+              onMouseLeave={e => { e.target.style.color = '#64748b'; e.target.style.background = 'transparent' }}
             >
               {cat.name}
             </Link>
           ))}
         </div>
-      )}
-
+      </div>
     </header>
   )
 }
