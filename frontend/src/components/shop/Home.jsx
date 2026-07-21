@@ -13,11 +13,7 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       <Navbar />
       <CartDrawer />
-
-      {/* Hero — full width, no padding */}
       <HeroBanner />
-
-      {/* Content sections */}
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-12">
         <NewArrivals />
         <CategoryGrid />
@@ -25,8 +21,8 @@ export default function Home() {
         <BrandStrip />
         <Newsletter />
       </main>
-
       <Footer />
     </div>
   )
 }
+
