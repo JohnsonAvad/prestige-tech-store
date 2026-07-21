@@ -6,64 +6,47 @@ import api from '../../utils/api'
 export default function FeaturedProducts() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
 
   useEffect(() => {
-    console.log('FeaturedProducts: fetching from', api.defaults.baseURL)
     api.get('/products?isFeatured=true&limit=8')
-      .then(res => {
-        console.log('FeaturedProducts response:', res.data)
-        setProducts(res.data.products || [])
-      })
-      .catch((err) => {
-        console.error('FeaturedProducts error:', err.message)
-        setError(err.message)
-        setProducts([])
-      })
+      .then(res => setProducts(res.data.products || []))
+      .catch(() => setProducts([]))
       .finally(() => setLoading(false))
   }, [])
 
   if (loading) {
     return (
       <section>
-        <h2 className="text-xl md:text-2xl font-black text-white mb-6">Featured Products</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl md:text-2xl font-black text-gray-900">Featured Products</h2>
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-white/5 rounded-2xl aspect-[3/4] animate-pulse" />
+            <div key={i} className="bg-white border border-gray-100 rounded-2xl overflow-hidden animate-pulse">
+              <div className="aspect-square bg-gray-50" />
+              <div className="p-4 space-y-2">
+                <div className="h-3 bg-gray-100 rounded w-1/3" />
+                <div className="h-4 bg-gray-100 rounded w-full" />
+                <div className="h-4 bg-gray-100 rounded w-2/3" />
+                <div className="h-8 bg-gray-100 rounded w-full mt-2" />
+              </div>
+            </div>
           ))}
         </div>
       </section>
     )
   }
 
-  if (error) {
-    return (
-      <section>
-        <h2 className="text-xl md:text-2xl font-black text-white mb-4">Featured Products</h2>
-        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
-          <p className="text-red-400 text-sm">Error loading products: {error}</p>
-          <p className="text-white/40 text-xs mt-1">Make sure backend is running at localhost:3000</p>
-        </div>
-      </section>
-    )
-  }
-
-  if (products.length === 0) {
-    return (
-      <section>
-        <h2 className="text-xl md:text-2xl font-black text-white mb-4">Featured Products</h2>
-        <p className="text-white/40 text-sm">No featured products found.</p>
-      </section>
-    )
-  }
+  if (products.length === 0) return null
 
   return (
     <section>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl md:text-2xl font-black text-white">
-          Featured Products
-        </h2>
-        <Link to="/products" className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors">
+        <div>
+          <h2 className="text-xl md:text-2xl font-black text-gray-900">Featured Products</h2>
+          <p className="text-gray-400 text-sm mt-1">Handpicked products just for you</p>
+        </div>
+        <Link to="/products" className="text-blue-600 hover:text-blue-700 text-sm font-semibold transition-colors">
           View all →
         </Link>
       </div>

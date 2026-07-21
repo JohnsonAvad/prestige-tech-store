@@ -17,12 +17,17 @@ export default function NewArrivals() {
   if (loading) {
     return (
       <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl md:text-2xl font-black text-white">New Arrivals</h2>
-        </div>
+        <h2 className="text-xl md:text-2xl font-black text-gray-900 mb-6">New Arrivals</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-white/5 rounded-2xl aspect-[3/4] animate-pulse" />
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-white border border-gray-100 rounded-2xl overflow-hidden animate-pulse">
+              <div className="aspect-square bg-gray-50" />
+              <div className="p-4 space-y-2">
+                <div className="h-3 bg-gray-100 rounded w-1/3" />
+                <div className="h-4 bg-gray-100 rounded" />
+                <div className="h-8 bg-gray-100 rounded mt-2" />
+              </div>
+            </div>
           ))}
         </div>
       </section>
@@ -34,10 +39,11 @@ export default function NewArrivals() {
   return (
     <section>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl md:text-2xl font-black text-white">
-          New Arrivals
-        </h2>
-        <Link to="/new-arrivals" className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors">
+        <div>
+          <h2 className="text-xl md:text-2xl font-black text-gray-900">New Arrivals</h2>
+          <p className="text-gray-400 text-sm mt-1">Fresh stock just landed</p>
+        </div>
+        <Link to="/new-arrivals" className="text-blue-600 hover:text-blue-700 text-sm font-semibold transition-colors">
           View all →
         </Link>
       </div>

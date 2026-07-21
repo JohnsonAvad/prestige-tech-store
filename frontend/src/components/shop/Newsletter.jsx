@@ -15,11 +15,11 @@ export default function Newsletter() {
   }
 
   return (
-    <section className="bg-gradient-to-r from-blue-600/10 to-green-600/10 border border-white/10 rounded-2xl p-8 md:p-12 text-center">
+    <section className="bg-gradient-to-r from-blue-600 to-green-600 rounded-3xl p-8 md:p-12 text-center">
       <h2 className="text-2xl md:text-3xl font-black text-white mb-2">
         Stay in the Loop
       </h2>
-      <p className="text-white/50 text-sm md:text-base mb-8 max-w-md mx-auto">
+      <p className="text-white/80 text-sm md:text-base mb-8 max-w-md mx-auto">
         Get exclusive deals, new arrivals and tech news delivered to your inbox.
       </p>
 
@@ -31,27 +31,25 @@ export default function Newsletter() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email address"
             required
-            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 text-sm outline-none focus:border-blue-500 transition-all duration-200"
+            className="flex-1 bg-white/20 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-white/60 text-sm outline-none focus:bg-white/30 transition-all duration-200"
           />
           <button
             type="submit"
             disabled={loading}
-            className="bg-gradient-to-r from-blue-600 to-green-600 text-white font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-all duration-200 disabled:opacity-50 whitespace-nowrap text-sm"
+            className="bg-white text-blue-600 font-black px-6 py-3 rounded-xl hover:bg-gray-50 transition-all duration-200 disabled:opacity-50 whitespace-nowrap text-sm"
           >
             {loading ? 'Joining...' : 'Subscribe'}
           </button>
         </form>
       ) : (
-        <div className="bg-green-500/10 border border-green-500/30 rounded-xl px-6 py-3 inline-block">
-          <p className="text-green-400 font-semibold text-sm">
+        <div className="bg-white/20 border border-white/30 rounded-xl px-6 py-3 inline-block">
+          <p className="text-white font-semibold text-sm">
             You are subscribed! Watch your inbox for exclusive deals.
           </p>
         </div>
       )}
 
-      <p className="text-white/20 text-xs mt-4">
-        No spam. Unsubscribe anytime.
-      </p>
+      <p className="text-white/40 text-xs mt-4">No spam. Unsubscribe anytime.</p>
     </section>
   )
 }
