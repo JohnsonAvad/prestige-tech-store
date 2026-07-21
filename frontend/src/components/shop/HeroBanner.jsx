@@ -8,15 +8,16 @@ const SLIDES = [
     badgeColor: 'bg-blue-100 text-blue-700',
     title: 'iPhone 15',
     titleAccent: 'Pro Max',
-    subtitle: 'Titanium design meets A17 Pro performance',
-    description: 'Pay with MTN MoMo or Airtel Money. Same-day delivery in Kampala.',
+    accentColor: 'text-blue-600',
+    subtitle: 'Titanium · A17 Pro · 48MP Camera',
+    description: 'Pay with MTN MoMo or Airtel Money.',
     cta: 'Shop Now',
     ctaLink: '/category/smartphones',
-    bgFrom: 'from-blue-50',
-    bgTo: 'to-white',
-    accentColor: 'text-blue-600',
-    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&q=80',
     price: 'UGX 4,200,000',
+    priceColor: 'text-blue-600',
+    bgColor: 'bg-blue-50',
+    blobColor: 'bg-blue-200',
+    image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=500&q=80',
   },
   {
     id: 2,
@@ -24,31 +25,33 @@ const SLIDES = [
     badgeColor: 'bg-green-100 text-green-700',
     title: 'Samsung Galaxy',
     titleAccent: 'S24 Ultra',
-    subtitle: '200MP camera · Built-in S Pen · AI features',
-    description: 'Uganda\'s most advanced Android smartphone. In stock now.',
+    accentColor: 'text-green-600',
+    subtitle: '200MP Camera · Built-in S Pen',
+    description: 'Uganda\'s most advanced Android phone.',
     cta: 'View Deal',
     ctaLink: '/category/smartphones',
-    bgFrom: 'from-green-50',
-    bgTo: 'to-white',
-    accentColor: 'text-green-600',
-    image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&q=80',
     price: 'UGX 3,200,000',
+    priceColor: 'text-green-600',
+    bgColor: 'bg-green-50',
+    blobColor: 'bg-green-200',
+    image: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500&q=80',
   },
   {
     id: 3,
     badge: 'Professional',
-    badgeColor: 'bg-purple-100 text-purple-700',
+    badgeColor: 'bg-slate-100 text-slate-700',
     title: 'MacBook Pro',
-    titleAccent: 'M3 Pro',
-    subtitle: 'The most powerful MacBook ever built',
-    description: 'For creators, developers and professionals in Uganda.',
+    titleAccent: 'M3 Chip',
+    accentColor: 'text-slate-700',
+    subtitle: 'The most powerful Mac ever built',
+    description: 'For creators and professionals in Uganda.',
     cta: 'Explore',
     ctaLink: '/category/laptops',
-    bgFrom: 'from-slate-50',
-    bgTo: 'to-white',
-    accentColor: 'text-slate-700',
-    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&q=80',
     price: 'UGX 4,500,000',
+    priceColor: 'text-slate-700',
+    bgColor: 'bg-slate-50',
+    blobColor: 'bg-slate-200',
+    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&q=80',
   },
 ]
 
@@ -62,90 +65,95 @@ export default function HeroBanner() {
       setTimeout(() => {
         setCurrent(prev => (prev + 1) % SLIDES.length)
         setFading(false)
-      }, 400)
+      }, 350)
     }, 5000)
     return () => clearInterval(timer)
   }, [])
 
   const goTo = (index) => {
+    if (index === current) return
     setFading(true)
     setTimeout(() => {
       setCurrent(index)
       setFading(false)
-    }, 400)
+    }, 350)
   }
 
   const slide = SLIDES[current]
 
   return (
-    <div className={`relative rounded-3xl overflow-hidden bg-gradient-to-br ${slide.bgFrom} ${slide.bgTo} transition-all duration-500`}
-      style={{ minHeight: '420px' }}
+    <div className={`relative w-full overflow-hidden ${slide.bgColor} transition-colors duration-700`}
+      style={{ minHeight: '480px' }}
     >
-      <div className={`flex items-center transition-opacity duration-400 ${fading ? 'opacity-0' : 'opacity-100'}`}
-        style={{ minHeight: '420px' }}
+
+      <div className={`max-w-7xl mx-auto px-6 md:px-12 flex items-center transition-opacity duration-350 ${fading ? 'opacity-0' : 'opacity-100'}`}
+        style={{ minHeight: '480px' }}
       >
 
-        {/* Left — Text Content */}
-        <div className="flex-1 px-8 md:px-16 py-12 md:py-16 z-10">
+        {/* Left — Text */}
+        <div className="flex-1 py-16 pr-8 z-10">
 
-          {/* Badge */}
-          <span className={`inline-block ${slide.badgeColor} text-xs font-bold px-3 py-1.5 rounded-full mb-6 uppercase tracking-wide`}>
+          <span className={`inline-block ${slide.badgeColor} text-xs font-black px-4 py-1.5 rounded-full mb-6 uppercase tracking-widest`}>
             {slide.badge}
           </span>
 
-          {/* Title */}
-          <h1 className="text-4xl md:text-6xl font-black text-gray-900 leading-tight mb-3">
+          <h1 className="text-5xl md:text-7xl font-black text-gray-900 leading-none mb-3">
             {slide.title}
-            <span className={`block ${slide.accentColor}`}>
+            <span className={`block ${slide.accentColor} mt-1`}>
               {slide.titleAccent}
             </span>
           </h1>
 
-          {/* Subtitle */}
-          <p className="text-gray-600 text-base md:text-lg font-medium mb-2">
+          <p className="text-gray-500 text-base md:text-lg font-medium mb-1 mt-4">
             {slide.subtitle}
           </p>
-
-          {/* Description */}
-          <p className="text-gray-400 text-sm mb-4 hidden md:block">
+          <p className="text-gray-400 text-sm mb-6">
             {slide.description}
           </p>
 
-          {/* Price */}
-          <p className={`text-2xl font-black ${slide.accentColor} mb-8`}>
+          <p className={`text-3xl font-black ${slide.priceColor} mb-8`}>
             {slide.price}
           </p>
 
-          {/* CTA */}
-          <Link
-            to={slide.ctaLink}
-            className="inline-flex items-center gap-2 bg-gray-900 text-white font-bold px-8 py-4 rounded-2xl hover:bg-gray-700 transition-all duration-200 text-sm"
-          >
-            {slide.cta}
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              to={slide.ctaLink}
+              className="inline-flex items-center gap-2 bg-gray-900 text-white font-black px-8 py-4 rounded-2xl hover:bg-gray-700 transition-all duration-200 text-sm"
+            >
+              {slide.cta}
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+            <Link
+              to={slide.ctaLink}
+              className="text-gray-400 hover:text-gray-600 text-sm font-semibold transition-colors"
+            >
+              Browse all →
+            </Link>
+          </div>
 
         </div>
 
-        {/* Right — Product Image Floating Freely */}
-        <div className="hidden md:flex flex-1 items-center justify-center relative py-8 pr-8">
+        {/* Right — Product floating completely free in space */}
+        <div className="hidden md:flex flex-1 items-center justify-center relative py-8">
 
-          {/* Subtle glow behind product */}
-          <div className={`absolute w-72 h-72 rounded-full blur-3xl opacity-20 ${
-            current === 0 ? 'bg-blue-400' :
-            current === 1 ? 'bg-green-400' :
-            'bg-slate-400'
-          }`} />
+          {/* Decorative blob behind product — NOT a box */}
+          <div
+            className={`absolute w-80 h-80 ${slide.blobColor} rounded-full opacity-40 blur-3xl`}
+            style={{ right: '10%', top: '50%', transform: 'translateY(-50%)' }}
+          />
 
-          {/* Product image — no box, just floating in space */}
+          {/* Product image — pure floating, no container */}
           <img
             src={slide.image}
             alt={slide.title}
-            className="relative z-10 w-72 h-72 object-contain drop-shadow-2xl transition-all duration-500"
+            className="relative z-10 object-contain transition-all duration-500"
             style={{
-              filter: 'drop-shadow(0 25px 50px rgba(0,0,0,0.15))'
+              width: '320px',
+              height: '380px',
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 30px 60px rgba(0,0,0,0.12))',
             }}
           />
 
@@ -153,8 +161,8 @@ export default function HeroBanner() {
 
       </div>
 
-      {/* Navigation dots */}
-      <div className="absolute bottom-6 left-8 md:left-16 flex items-center gap-2">
+      {/* Navigation dots — bottom left */}
+      <div className="absolute bottom-8 left-6 md:left-12 flex items-center gap-3">
         {SLIDES.map((_, i) => (
           <button
             key={i}
@@ -166,11 +174,9 @@ export default function HeroBanner() {
             }`}
           />
         ))}
-      </div>
-
-      {/* Slide counter */}
-      <div className="absolute bottom-6 right-8 text-gray-400 text-xs font-medium">
-        {current + 1} / {SLIDES.length}
+        <span className="text-gray-400 text-xs font-medium ml-2">
+          {current + 1} / {SLIDES.length}
+        </span>
       </div>
 
     </div>
