@@ -98,7 +98,7 @@ export default function ProductPage() {
             {product.category?.name}
           </Link>
           <span>/</span>
-          <span className="text-white line-clamp-1">{product.name}</span>
+          <span className="text-white line-clamp-3">{product.name}</span>
         </div>
 
         {/* Main Product Section */}
