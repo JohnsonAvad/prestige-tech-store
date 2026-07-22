@@ -14,6 +14,8 @@ const CATEGORIES = [
   { name: 'Gaming', slug: 'gaming', color: '#0891b2', img: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=300&q=80' },
   { name: 'Networking', slug: 'networking', color: '#475569', img: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=300&q=80' },
   { name: 'Storage', slug: 'storage', color: '#059669', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&q=80' },
+  { name: 'SmartHome', slug: 'smarthome', color: '#0891b2', img: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=300&q=80' },
+{ name: 'Speakers', slug: 'speakers', color: '#7c3aed', img: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=300&q=80' },
 ]
 
 export default function CategoryGrid() {

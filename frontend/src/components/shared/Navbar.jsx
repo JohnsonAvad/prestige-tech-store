@@ -17,17 +17,21 @@ export default function Navbar() {
   }
 
   const cats = [
-    { name: 'Laptops', slug: 'laptops' },
-    { name: 'Smartphones', slug: 'smartphones' },
-    { name: 'Tablets', slug: 'tablets' },
-    { name: 'Monitors', slug: 'monitors' },
-    { name: 'Headphones', slug: 'headphones' },
-    { name: 'Smartwatches', slug: 'smartwatches' },
-    { name: 'Power Banks', slug: 'power-banks' },
-    { name: 'Cameras', slug: 'cameras' },
-    { name: 'Accessories', slug: 'accessories' },
-    { name: 'Gaming', slug: 'gaming' },
-  ]
+  { name: 'Laptops', slug: 'laptops' },
+  { name: 'Smartphones', slug: 'smartphones' },
+  { name: 'Tablets', slug: 'tablets' },
+  { name: 'Monitors', slug: 'monitors' },
+  { name: 'Headphones', slug: 'headphones' },
+  { name: 'Smartwatches', slug: 'smartwatches' },
+  { name: 'Power Banks', slug: 'power-banks' },
+  { name: 'Cameras', slug: 'cameras' },
+  { name: 'Accessories', slug: 'accessories' },
+  { name: 'Gaming', slug: 'gaming' },
+  { name: 'SmartHome', slug: 'smarthome' },
+  { name: 'Speakers', slug: 'speakers' },
+  { name: 'Networking', slug: 'networking' },
+  { name: 'Storage', slug: 'storage' },
+]
 
   return (
     <header style={{ position: 'sticky', top: 0, zIndex: 100 }}>
