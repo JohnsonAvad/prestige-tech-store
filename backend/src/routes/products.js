@@ -132,25 +132,23 @@ router.get('/:id', async (req, res, next) => {
 // ── CREATE PRODUCT (Admin only) ──
 router.post('/', authenticate, adminOnly, async (req, res, next) => {
   try {
-    const schema = z.object({
-      name: z.string().min(2),
-      brand: z.string().min(1),
-      categoryId: z.string().uuid(),
-      sku: z.string().min(1),
-      price: z.number().positive(),
-      comparePrice: z.number().positive().optional(),
-      description: z.string().optional(),
-      specs: z.record(z.string()).optional(),
-      stock: z.number().int().min(0).default(0),
-      images: z.array(z.string()).optional(),
-      isFeatured: z.boolean().default(false),
-      isNewArrival: z.boolean().default(false),
-      tags: z.array(z.string()).optional(),
-      weight: z.number().optional(),
-    })
+   const data = {
+  name: req.body.name || 'Unnamed Product',
+  brand: req.body.brand || 'Unknown',
+  categoryId: req.body.categoryId,
+  sku: req.body.sku || `SKU-${Date.now()}`,
+  price: parseFloat(req.body.price) || 0,
+  comparePrice: req.body.comparePrice ? parseFloat(req.body.comparePrice) : undefined,
+  description: req.body.description || '',
+  specs: req.body.specs || {},
+  stock: parseInt(req.body.stock) || 10,
+  images: req.body.images || [],
+  isFeatured: req.body.isFeatured || false,
+  isNewArrival: req.body.isNewArrival || false,
+  tags: req.body.tags || [],
+}
 
-    const data = schema.parse(req.body)
-
+   
     // Generate slug from name
     const slug = data.name
       .toLowerCase()

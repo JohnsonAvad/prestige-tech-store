@@ -44,78 +44,74 @@ export default function CSVImport() {
   }
 
   const handleImport = async () => {
-    if (!file) return
-    setImporting(true)
-    setError('')
-    setResults(null)
+  if (!file) return
+  setImporting(true)
+  setError('')
+  setResults(null)
 
-    try {
-      const text = await file.text()
-      const rows = parseCSV(text)
+  try {
+    const text = await file.text()
+    const rows = parseCSV(text)
 
-      let success = 0
-      let failed = 0
-      const errors = []
+    let success = 0
+    let failed = 0
+    const errors = []
 
-      // Get categories first
-      const catRes = await api.get('/categories')
-      const categories = catRes.data.categories || []
+    const catRes = await api.get('/categories')
+    const categories = catRes.data.categories || []
 
-      for (const row of rows) {
-        try {
-          if (!row.name || !row.brand || !row.price) {
-            failed++
-            errors.push(`Skipped: ${row.name || 'unnamed'} — missing required fields`)
-            continue
-          }
-
-          const category = categories.find(c =>
-            c.name.toLowerCase() === (row.category || '').toLowerCase() ||
-            c.slug === (row.category || '').toLowerCase()
-          )
-
-          if (!category) {
-            failed++
-            errors.push(`Skipped: ${row.name} — category "${row.category}" not found`)
-            continue
-          }
-
-          const images = [row.image1, row.image2].filter(Boolean)
-
-          await api.post('/products', {
-            name: row.name,
-            brand: row.brand,
-            categoryId: category.id,
-            sku: row.sku || `SKU-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-            price: parseFloat(row.price),
-            comparePrice: row.comparePrice ? parseFloat(row.comparePrice) : undefined,
-            stock: parseInt(row.stock) || 0,
-            description: row.description || '',
-            images,
-            isFeatured: row.isFeatured?.toLowerCase() === 'yes',
-            isNewArrival: row.isNewArrival?.toLowerCase() === 'yes',
-            tags: row.tags ? row.tags.split(';').map(t => t.trim()) : [],
-          }, {
-            headers: { Authorization: `Bearer ${token}` }
-          })
-
-          success++
-
-        } catch (err) {
+    for (const row of rows) {
+      try {
+        if (!row.name) {
           failed++
-          errors.push(`Failed: ${row.name} — ${err.response?.data?.error || err.message}`)
+          errors.push(`Skipped: unnamed — missing name`)
+          continue
         }
+
+        let category = categories.find(c =>
+          c.name.toLowerCase() === (row.category || '').toLowerCase() ||
+          c.slug === (row.category || '').toLowerCase()
+        )
+
+        if (!category) {
+          category = categories[0]
+        }
+
+        const images = [row.image1, row.image2].filter(Boolean)
+
+        await api.post('/products', {
+          name: row.name,
+          brand: row.brand || 'Unknown',
+          categoryId: category.id,
+          sku: row.sku || `SKU-${Date.now()}-${Math.random().toString(36).substr(2, 9)}-${Math.floor(Math.random()*9999)}`,
+          price: parseFloat(row.price) || 0,
+          comparePrice: row.comparePrice ? parseFloat(row.comparePrice) : undefined,
+          stock: parseInt(row.stock) || 10,
+          description: row.description || '',
+          images,
+          isFeatured: row.isFeatured?.toLowerCase() === 'yes',
+          isNewArrival: row.isNewArrival?.toLowerCase() === 'yes',
+          tags: row.tags ? row.tags.split(';').map(t => t.trim()) : [],
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+
+        success++
+
+      } catch (err) {
+        failed++
+        errors.push(`Failed: ${row.name} — ${err.response?.data?.error || err.message}`)
       }
-
-      setResults({ success, failed, errors, total: rows.length })
-
-    } catch (err) {
-      setError('Failed to parse CSV file. Make sure it matches the template format.')
-    } finally {
-      setImporting(false)
     }
-  }
 
+    setResults({ success, failed, errors, total: rows.length })
+
+  } catch (err) {
+    setError('Failed to parse CSV file. Make sure it matches the template format.')
+  } finally {
+    setImporting(false)
+  }
+}
   return (
     <div className="min-h-screen bg-gray-950">
 

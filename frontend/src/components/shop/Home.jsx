@@ -10,19 +10,18 @@ import CartDrawer from '../../components/shop/CartDrawer'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <div style={{ background: '#ffffff', minHeight: '100vh' }}>
       <Navbar />
       <CartDrawer />
       <HeroBanner />
-      <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-12">
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '40px 24px', display: 'flex', flexDirection: 'column', gap: '56px' }}>
         <NewArrivals />
         <CategoryGrid />
         <FeaturedProducts />
         <BrandStrip />
         <Newsletter />
-      </main>
+      </div>
       <Footer />
     </div>
   )
 }
-
