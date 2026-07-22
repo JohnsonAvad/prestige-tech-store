@@ -33,15 +33,32 @@ export default function CSVImport() {
   }
 
   const parseCSV = (text) => {
-    const lines = text.split('\n').filter(line => line.trim())
-    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''))
-    return lines.slice(1).map(line => {
-      const values = line.split(',').map(v => v.trim().replace(/"/g, ''))
-      const obj = {}
-      headers.forEach((h, i) => obj[h] = values[i] || '')
-      return obj
-    })
-  }
+  const lines = text.split('\n').filter(line => line.trim())
+  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''))
+  
+  return lines.slice(1).map(line => {
+    const values = []
+    let current = ''
+    let inQuotes = false
+    
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i]
+      if (char === '"') {
+        inQuotes = !inQuotes
+      } else if (char === ',' && !inQuotes) {
+        values.push(current.trim())
+        current = ''
+      } else {
+        current += char
+      }
+    }
+    values.push(current.trim())
+    
+    const obj = {}
+    headers.forEach((h, i) => obj[h] = values[i] || '')
+    return obj
+  })
+}
 
   const handleImport = async () => {
   if (!file) return
