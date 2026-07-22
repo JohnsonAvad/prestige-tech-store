@@ -28,12 +28,15 @@ export default function AddProduct() {
   })
 
   useEffect(() => {
-    if (!token) {
-      navigate('/admin/login')
-      return
-    }
-    api.get('/categories').then(res => setCategories(res.data.categories || []))
-  }, [])
+  if (!token) {
+    navigate('/admin/login')
+    return
+  }
+  fetch('https://prestige-tech-store-api.vercel.app/api/categories')
+    .then(res => res.json())
+    .then(data => setCategories(data.categories || []))
+    .catch(err => console.log('Categories error:', err))
+}, [])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
