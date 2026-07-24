@@ -35,6 +35,7 @@ export default function CategoryPage() {
   const category = CATEGORIES.find(c => c.slug === slug)
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
     setLoading(true)
     const priceRange = PRICE_RANGES[selectedPriceRange]
     const params = new URLSearchParams({
@@ -58,16 +59,18 @@ export default function CategoryPage() {
       .finally(() => setLoading(false))
   }, [slug, sortBy, currentPage, selectedBrand, selectedPriceRange])
 
-  const updateFilter = (key, value) => {
-    const params = new URLSearchParams(searchParams)
-    if (value) {
-      params.set(key, value)
-    } else {
-      params.delete(key)
-    }
-    params.set('page', '1')
-    setSearchParams(params)
+ const updateFilter = (key, value) => {
+  const params = new URLSearchParams(searchParams)
+  if (value !== undefined && value !== '') {
+    params.set(key, value)
+  } else {
+    params.delete(key)
   }
+  if (key !== 'page') {
+    params.set('page', '1')
+  }
+  setSearchParams(params)
+}
 
   const totalPages = Math.ceil(totalCount / limit)
 
@@ -206,46 +209,47 @@ export default function CategoryPage() {
             <ProductGrid products={products} loading={loading} cols={3} />
 
             {/* Pagination */}
+            
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 mt-8">
-                <button
-                  onClick={() => updateFilter('page', currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className="w-10 h-10 bg-white/5 border border-white/10 text-white/60 rounded-xl flex items-center justify-center hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
+  <div className="flex items-center justify-center gap-2 mt-8">
+    <button
+      onClick={() => updateFilter('page', currentPage - 1)}
+      disabled={currentPage === 1}
+      className="w-10 h-10 bg-white border border-gray-200 text-gray-600 rounded-xl flex items-center justify-center hover:border-green-300 hover:text-green-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+    >
+      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
 
-                {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-                  const page = i + 1
-                  return (
-                    <button
-                      key={page}
-                      onClick={() => updateFilter('page', page)}
-                      className={`w-10 h-10 rounded-xl text-sm font-bold transition-all duration-200 ${
-                        currentPage === page
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-white/5 border border-white/10 text-white/60 hover:bg-white/10'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  )
-                })}
+    {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+      const page = i + 1
+      return (
+        <button
+          key={page}
+          onClick={() => updateFilter('page', page)}
+          className={`w-10 h-10 rounded-xl text-sm font-bold transition-all duration-200 ${
+            currentPage === page
+              ? 'bg-green-600 text-white'
+              : 'bg-white border border-gray-200 text-gray-600 hover:border-green-300 hover:text-green-600'
+          }`}
+        >
+          {page}
+        </button>
+      )
+    })}
 
-                <button
-                  onClick={() => updateFilter('page', currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className="w-10 h-10 bg-white/5 border border-white/10 text-white/60 rounded-xl flex items-center justify-center hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </div>
-            )}
+    <button
+      onClick={() => updateFilter('page', currentPage + 1)}
+      disabled={currentPage === totalPages}
+      className="w-10 h-10 bg-white border border-gray-200 text-gray-600 rounded-xl flex items-center justify-center hover:border-green-300 hover:text-green-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+    >
+      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+)}
 
           </div>
         </div>
