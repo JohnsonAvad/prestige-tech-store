@@ -2,136 +2,359 @@ import { Link } from 'react-router-dom'
 import useCartStore from '../../store/cartStore'
 import { formatPrice } from '../../utils/formatters'
 
+const FREE_DELIVERY_THRESHOLD = 200000
+
 export default function CartDrawer() {
   const {
-    items, isOpen, closeCart, removeItem,
-    updateQuantity, getSubtotal, getItemCount, clearCart
+    items,
+    isOpen,
+    closeCart,
+    removeItem,
+    updateQuantity,
+    getSubtotal,
+    getItemCount,
+    clearCart
   } = useCartStore()
 
   const subtotal = getSubtotal()
   const itemCount = getItemCount()
+  const remaining = Math.max(0, FREE_DELIVERY_THRESHOLD - subtotal)
+  const progress = Math.min(100, (subtotal / FREE_DELIVERY_THRESHOLD) * 100)
 
   if (!isOpen) return null
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" onClick={closeCart} />
+      {/* Overlay — light not dark */}
+      <div
+        onClick={closeCart}
+        style={{
+          position: 'fixed', inset: 0,
+          background: 'rgba(148,163,184,0.2)',
+          zIndex: 40
+        }}
+      />
 
-      <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white z-50 flex flex-col shadow-2xl">
+      {/* Drawer */}
+      <div style={{
+        position: 'fixed', right: 0, top: 0, bottom: 0,
+        width: '400px', maxWidth: '100vw',
+        display: 'flex', flexDirection: 'column',
+        zIndex: 50, boxShadow: '-4px 0 24px rgba(0,0,0,0.08)'
+      }}>
 
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <div className="flex items-center gap-3">
-            <h2 className="text-gray-900 font-black text-lg">Your Cart</h2>
+        {/* GREEN HEADER */}
+        <div style={{
+          background: '#16a34a', padding: '20px 24px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          flexShrink: 0
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span style={{ fontSize: '18px', fontWeight: 700, color: 'white' }}>Your cart</span>
             {itemCount > 0 && (
-              <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                {itemCount}
-              </span>
+              <span style={{
+                background: 'white', color: '#15803d',
+                fontSize: '11px', fontWeight: 800,
+                padding: '2px 9px', borderRadius: '20px'
+              }}>{itemCount}</span>
             )}
           </div>
-          <button onClick={closeCart} className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all">
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <button
+            onClick={closeCart}
+            style={{
+              width: '32px', height: '32px', borderRadius: '8px',
+              border: '1px solid rgba(255,255,255,0.3)',
+              background: 'rgba(255,255,255,0.15)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', color: 'white'
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        {/* Items */}
-        <div className="flex-1 overflow-y-auto px-6 py-4">
+        {/* LIGHT BLUE DELIVERY ALERT */}
+        <div style={{
+          background: '#eff6ff',
+          borderBottom: '2px solid #bfdbfe',
+          padding: '11px 24px',
+          display: 'flex', alignItems: 'center', gap: '10px',
+          flexShrink: 0
+        }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3m-1 11l2 2 4-4M13 17h8" />
+          </svg>
+          <span style={{ fontSize: '12px', color: '#1d4ed8', fontWeight: 600, flex: 1 }}>
+            {remaining > 0
+              ? `Add ${formatPrice(remaining)} more for free delivery in Kampala`
+              : 'You qualify for free delivery in Kampala!'
+            }
+          </span>
+          <div style={{
+            width: '64px', height: '5px',
+            background: '#bfdbfe', borderRadius: '3px',
+            overflow: 'hidden', flexShrink: 0
+          }}>
+            <div style={{
+              height: '100%', width: `${progress}%`,
+              background: '#2563eb', borderRadius: '3px',
+              transition: 'width 0.3s ease'
+            }} />
+          </div>
+        </div>
+
+        {/* GREEN ITEMS SECTION */}
+        <div style={{
+          flex: 1, overflowY: 'auto',
+          background: '#16a34a',
+          padding: items.length === 0 ? '0' : '16px 20px',
+          display: 'flex', flexDirection: 'column', gap: '10px'
+        }}>
           {items.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                <svg className="w-8 h-8 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <div style={{
+              flex: 1, display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center',
+              textAlign: 'center', padding: '48px 24px',
+              background: '#16a34a'
+            }}>
+              <div style={{
+                width: '72px', height: '72px',
+                background: 'rgba(255,255,255,0.15)',
+                borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: '16px'
+              }}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h3 className="text-gray-800 font-bold text-lg mb-2">Your cart is empty</h3>
-              <p className="text-gray-400 text-sm mb-6">Add products to get started</p>
-              <button onClick={closeCart} className="bg-blue-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors">
+              <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'white', marginBottom: '8px' }}>
+                Your cart is empty
+              </h3>
+              <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginBottom: '24px' }}>
+                Add products to get started
+              </p>
+              <button
+                onClick={closeCart}
+                style={{
+                  background: 'white', color: '#15803d',
+                  fontWeight: 700, fontSize: '14px',
+                  padding: '12px 28px', borderRadius: '12px',
+                  border: 'none', cursor: 'pointer'
+                }}
+              >
                 Continue Shopping
               </button>
             </div>
           ) : (
-            <div className="space-y-4">
-              {items.map(item => (
-                <div key={item.id} className="flex gap-3 bg-gray-50 border border-gray-100 rounded-2xl p-3">
-                  <div className="w-16 h-16 shrink-0 bg-white rounded-xl overflow-hidden border border-gray-100 p-1">
+            items.map(item => {
+              const discount = item.comparePrice
+                ? Math.round(((item.comparePrice - item.price) / item.comparePrice) * 100)
+                : 0
+              return (
+                <div key={item.id} style={{
+                  display: 'flex', gap: '12px', alignItems: 'flex-start',
+                  padding: '14px',
+                  background: 'rgba(255,255,255,0.13)',
+                  borderRadius: '14px',
+                  border: '1px solid rgba(255,255,255,0.22)'
+                }}>
+                  {/* Image */}
+                  <div style={{
+                    width: '64px', height: '64px', flexShrink: 0,
+                    background: 'white', borderRadius: '10px',
+                    overflow: 'hidden', display: 'flex',
+                    alignItems: 'center', justifyContent: 'center'
+                  }}>
                     {item.images?.[0] ? (
-                      <img src={item.images[0]} alt={item.name} className="w-full h-full object-contain" />
+                      <img src={item.images[0]} alt={item.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }} />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-200">
-                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                          <rect x="2" y="3" width="20" height="14" rx="2"/>
-                        </svg>
-                      </div>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5">
+                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                      </svg>
                     )}
                   </div>
 
-                  <div className="flex-1 min-w-0">
-                    <p className="text-gray-400 text-xs">{item.brand}</p>
-                    <p className="text-gray-800 text-sm font-semibold leading-tight line-clamp-2 mb-1">{item.name}</p>
-                    <p className="text-blue-600 font-black text-sm">{formatPrice(item.price)}</p>
+                  {/* Details */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.65)', marginBottom: '2px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      {item.brand}
+                    </p>
+                    <p style={{ fontSize: '13px', fontWeight: 600, color: 'white', lineHeight: 1.4, marginBottom: '6px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {item.name}
+                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 800, color: 'white' }}>
+                        {formatPrice(item.price)}
+                      </span>
+                      {item.comparePrice && (
+                        <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.45)', textDecoration: 'line-through' }}>
+                          {formatPrice(item.comparePrice)}
+                        </span>
+                      )}
+                      {discount > 0 && (
+                        <span style={{ fontSize: '10px', fontWeight: 700, background: 'rgba(255,255,255,0.2)', color: 'white', padding: '1px 6px', borderRadius: '4px' }}>
+                          -{discount}%
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="flex flex-col items-end justify-between shrink-0">
-                    <button onClick={() => removeItem(item.id)} className="text-gray-200 hover:text-red-400 transition-colors">
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  {/* Controls */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-between', gap: '10px', flexShrink: 0 }}>
+                    <button
+                      onClick={() => removeItem(item.id)}
+                      style={{
+                        width: '28px', height: '28px', borderRadius: '8px',
+                        border: '1px solid rgba(255,255,255,0.25)',
+                        background: 'rgba(255,255,255,0.1)',
+                        cursor: 'pointer', color: 'rgba(255,255,255,0.75)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                      }}
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
                     </button>
-
-                    <div className="flex items-center bg-white border border-gray-200 rounded-lg overflow-hidden">
-                      <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-all">
-                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
-                        </svg>
-                      </button>
-                      <span className="w-8 text-center text-gray-800 text-xs font-bold">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-all">
-                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                        </svg>
-                      </button>
+                    <div style={{
+                      display: 'flex', alignItems: 'center',
+                      background: 'rgba(255,255,255,0.15)',
+                      border: '1px solid rgba(255,255,255,0.3)',
+                      borderRadius: '8px', overflow: 'hidden'
+                    }}>
+                      <button
+                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        style={{ width: '28px', height: '28px', border: 'none', background: 'none', cursor: 'pointer', color: 'white', fontSize: '16px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >−</button>
+                      <span style={{ width: '28px', textAlign: 'center', fontSize: '13px', fontWeight: 700, color: 'white' }}>
+                        {item.quantity}
+                      </span>
+                      <button
+                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        style={{ width: '28px', height: '28px', border: 'none', background: 'none', cursor: 'pointer', color: 'white', fontSize: '16px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >+</button>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              )
+            })
           )}
         </div>
 
-        {/* Footer */}
+        {/* Only show footer when items exist */}
         {items.length > 0 && (
-          <div className="border-t border-gray-100 px-6 py-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-500 text-sm">Subtotal ({itemCount} items)</span>
-              <span className="text-gray-900 font-black text-lg">{formatPrice(subtotal)}</span>
+          <>
+            {/* LIGHT BLUE SUBTOTALS */}
+            <div style={{
+              background: '#eff6ff',
+              borderTop: '2px solid #bfdbfe',
+              padding: '14px 20px',
+              display: 'flex', flexDirection: 'column', gap: '8px',
+              flexShrink: 0
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '13px', color: '#1e40af' }}>Subtotal ({itemCount} items)</span>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>{formatPrice(subtotal)}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '13px', color: '#1e40af' }}>Delivery</span>
+                <span style={{ fontSize: '13px', fontWeight: 700, color: subtotal >= FREE_DELIVERY_THRESHOLD ? '#15803d' : '#0f172a' }}>
+                  {subtotal >= FREE_DELIVERY_THRESHOLD ? 'Free in Kampala' : 'Calculated at checkout'}
+                </span>
+              </div>
             </div>
 
-            <p className="text-gray-400 text-xs">Delivery fee calculated at checkout</p>
+            {/* GREEN FOOTER — total + actions */}
+            <div style={{
+              background: '#16a34a',
+              padding: '18px 20px',
+              display: 'flex', flexDirection: 'column', gap: '12px',
+              flexShrink: 0
+            }}>
+              {/* Grand total */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '15px', fontWeight: 700, color: 'white' }}>Total</span>
+                <span style={{ fontSize: '22px', fontWeight: 800, color: 'white' }}>{formatPrice(subtotal)}</span>
+              </div>
 
-            <div className="flex items-center gap-2">
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-1.5">
-                <span className="text-yellow-600 text-xs font-bold">MTN MoMo</span>
+              <div style={{ height: '1px', background: 'rgba(255,255,255,0.25)' }} />
+
+              {/* Payment methods */}
+              <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                <span style={{ fontSize: '11px', fontWeight: 700, padding: '5px 12px', borderRadius: '8px', background: 'rgba(234,179,8,0.2)', color: '#fef08a', border: '1px solid rgba(234,179,8,0.5)' }}>MTN MoMo</span>
+                <span style={{ fontSize: '11px', fontWeight: 700, padding: '5px 12px', borderRadius: '8px', background: 'rgba(239,68,68,0.2)', color: '#fca5a5', border: '1px solid rgba(239,68,68,0.5)' }}>Airtel Money</span>
+                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginLeft: '2px' }}>accepted</span>
               </div>
-              <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-1.5">
-                <span className="text-red-500 text-xs font-bold">Airtel Money</span>
+
+              {/* Checkout button */}
+              <Link
+                to="/checkout"
+                onClick={closeCart}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  background: 'white', color: '#15803d',
+                  fontSize: '15px', fontWeight: 800,
+                  padding: '15px', borderRadius: '14px',
+                  textDecoration: 'none', border: 'none'
+                }}
+              >
+                Proceed to checkout
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#15803d" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </Link>
+
+              {/* Continue shopping */}
+              <button
+                onClick={closeCart}
+                style={{
+                  width: '100%', padding: '11px', borderRadius: '12px',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  background: 'rgba(255,255,255,0.1)',
+                  color: 'white', fontSize: '13px', fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                Continue shopping
+              </button>
+
+              {/* Clear cart */}
+              <button
+                onClick={clearCart}
+                style={{
+                  background: 'none', border: 'none',
+                  color: 'rgba(255,255,255,0.4)',
+                  fontSize: '11px', cursor: 'pointer', textAlign: 'center'
+                }}
+              >
+                Clear cart
+              </button>
+
+              {/* LIGHT BLUE SECURITY BADGE — matches delivery bar */}
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                justifyContent: 'center',
+                background: '#eff6ff', borderRadius: '10px',
+                padding: '10px 14px', border: '1px solid #bfdbfe'
+              }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <span style={{ fontSize: '11px', color: '#1d4ed8', fontWeight: 600 }}>
+                  Secured checkout — your data is safe
+                </span>
               </div>
+
             </div>
-
-            <Link
-              to="/checkout"
-              onClick={closeCart}
-              className="block w-full bg-gradient-to-r from-blue-600 to-green-600 text-white font-black py-4 rounded-xl text-center hover:opacity-90 transition-all duration-200"
-            >
-              Proceed to Checkout
-            </Link>
-
-            <button onClick={clearCart} className="w-full text-gray-300 hover:text-red-400 text-xs text-center transition-colors py-1">
-              Clear cart
-            </button>
-          </div>
+          </>
         )}
+
       </div>
     </>
   )
