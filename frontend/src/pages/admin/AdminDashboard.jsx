@@ -95,6 +95,7 @@ export default function AdminDashboard() {
     { label: 'All Products', icon: '📦', to: '/admin/products', color: 'green' },
     { label: 'Import CSV', icon: '📥', to: '/admin/products/import', color: 'purple' },
     { label: 'View Store', icon: '🏪', to: '/', color: 'teal' },
+    { label: 'Orders', icon: '📋', to: '/admin/orders', color: 'blue' },
   ].map((action) => (
     <Link
       key={action.label}
