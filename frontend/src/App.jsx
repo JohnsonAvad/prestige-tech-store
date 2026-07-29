@@ -12,7 +12,6 @@ import AdminProducts from './pages/admin/AdminProducts'
 import AddProduct from './pages/admin/AddProduct'
 import CSVImport from './pages/admin/CSVImport'
 
-
 function App() {
   return (
     <Router>
@@ -23,12 +22,9 @@ function App() {
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
-<Route path="/order-confirmation/:orderNumber" element={<OrderConfirmation />} />
-
-
+        <Route path="/order-confirmation/:orderNumber" element={<OrderConfirmation />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="*" element={<Home />} />
         <Route path="/admin/products" element={<AdminProducts />} />
         <Route path="/admin/products/add" element={<AddProduct />} />
         <Route path="/admin/products/import" element={<CSVImport />} />

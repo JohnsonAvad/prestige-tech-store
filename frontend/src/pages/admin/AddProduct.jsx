@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import api from '../../utils/api'
 
 export default function AddProduct() {
+  const [uploadingIndex, setUploadingIndex] = useState(null)
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -261,52 +262,94 @@ export default function AddProduct() {
             />
           </div>
 
+          
           {/* Images */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-            <h2 className="text-white font-bold text-sm mb-4 uppercase tracking-wide">Product Images</h2>
-            <p className="text-white/40 text-xs mb-4">
-              Paste image URLs. Find images on Jumia, manufacturer websites or Unsplash.
-            </p>
-            <div className="space-y-3">
-              {imageUrls.map((url, i) => (
-                <div key={i} className="flex gap-3 items-center">
-                  <div className="w-12 h-12 shrink-0 bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-                    {url ? (
-                      <img src={url} alt="" className="w-full h-full object-cover" onError={(e) => e.target.style.display = 'none'} />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-white/20 text-xs">IMG</div>
-                    )}
-                  </div>
-                  <input
-                    value={url}
-                    onChange={(e) => handleImageUrl(i, e.target.value)}
-                    placeholder={`Image ${i + 1} URL — https://...`}
-                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 text-sm outline-none focus:border-blue-500 transition-all"
-                  />
-                  {imageUrls.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => setImageUrls(imageUrls.filter((_, idx) => idx !== i))}
-                      className="text-white/20 hover:text-red-400 transition-colors"
-                    >
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  )}
-                </div>
-              ))}
-              {imageUrls.length < 6 && (
-                <button
-                  type="button"
-                  onClick={() => setImageUrls([...imageUrls, ''])}
-                  className="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
-                >
-                  + Add another image
-                </button>
-              )}
-            </div>
+<div style={{ background: 'white', borderRadius: '16px', padding: '24px', border: '1px solid #f1f5f9' }}>
+  <h2 style={{ fontSize: '13px', fontWeight: 700, color: '#64748b', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>Product Images</h2>
+  <p style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '16px' }}>Upload from your computer or paste an image URL.</p>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    {imageUrls.map((url, i) => (
+      <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        {/* Preview */}
+        <div style={{ width: '56px', height: '56px', flexShrink: 0, background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {url ? (
+            <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={e => e.target.style.display = 'none'} />
+          ) : (
+            <span style={{ fontSize: '10px', color: '#cbd5e1' }}>IMG</span>
+          )}
+        </div>
+
+        {/* URL input */}
+        <input
+          value={url}
+          onChange={e => handleImageUrl(i, e.target.value)}
+          placeholder={`Image ${i + 1} URL — https://...`}
+          style={{ flex: 1, border: '1px solid #e2e8f0', borderRadius: '10px', padding: '10px 14px', fontSize: '13px', outline: 'none', color: '#0f172a' }}
+        />
+
+        {/* Upload button */}
+        <label style={{ flexShrink: 0, cursor: 'pointer' }}>
+          <input
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={async (e) => {
+              const file = e.target.files[0]
+              if (!file) return
+              const formData = new FormData()
+              formData.append('image', file)
+              try {
+                setUploadingIndex(i)
+                const res = await fetch('https://prestige-tech-store-api.vercel.app/api/upload', {
+                  method: 'POST',
+                  headers: { Authorization: `Bearer ${token}` },
+                  body: formData
+                })
+                const data = await res.json()
+                if (data.url) handleImageUrl(i, data.url)
+              } catch (err) {
+                console.error('Upload failed:', err)
+              } finally {
+                setUploadingIndex(null)
+              }
+            }}
+          />
+          <div style={{
+            background: uploadingIndex === i ? '#e2e8f0' : '#eff6ff',
+            border: '1px solid #bfdbfe',
+            color: '#1d4ed8',
+            padding: '10px 14px',
+            borderRadius: '10px',
+            fontSize: '12px',
+            fontWeight: 600,
+            whiteSpace: 'nowrap'
+          }}>
+            {uploadingIndex === i ? 'Uploading...' : '📁 Upload'}
           </div>
+        </label>
+
+        {/* Remove button */}
+        {imageUrls.length > 1 && (
+          <button
+            type="button"
+            onClick={() => setImageUrls(imageUrls.filter((_, idx) => idx !== i))}
+            style={{ color: '#cbd5e1', background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px', flexShrink: 0 }}
+          >×</button>
+        )}
+      </div>
+    ))}
+
+    {imageUrls.length < 6 && (
+      <button
+        type="button"
+        onClick={() => setImageUrls([...imageUrls, ''])}
+        style={{ color: '#16a34a', background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600, textAlign: 'left' }}
+      >
+        + Add another image
+      </button>
+    )}
+  </div>
+</div>
 
           {/* Specifications */}
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
