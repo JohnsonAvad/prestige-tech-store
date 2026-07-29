@@ -11,6 +11,9 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminProducts from './pages/admin/AdminProducts'
 import AddProduct from './pages/admin/AddProduct'
 import CSVImport from './pages/admin/CSVImport'
+import LoginPage from './pages/shop/LoginPage'
+import RegisterPage from './pages/shop/RegisterPage'
+
 
 function App() {
   return (
@@ -28,6 +31,8 @@ function App() {
         <Route path="/admin/products" element={<AdminProducts />} />
         <Route path="/admin/products/add" element={<AddProduct />} />
         <Route path="/admin/products/import" element={<CSVImport />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="*" element={<Home />} />
       </Routes>
     </Router>
