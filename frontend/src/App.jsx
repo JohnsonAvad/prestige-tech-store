@@ -13,6 +13,7 @@ import AddProduct from './pages/admin/AddProduct'
 import CSVImport from './pages/admin/CSVImport'
 import LoginPage from './pages/shop/LoginPage'
 import RegisterPage from './pages/shop/RegisterPage'
+import MyOrdersPage from './pages/shop/MyOrdersPage'
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
         <Route path="/admin/products/import" element={<CSVImport />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/account/orders" element={<MyOrdersPage />} />
         <Route path="*" element={<Home />} />
       </Routes>
     </Router>
