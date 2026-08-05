@@ -176,32 +176,34 @@ router.post('/', authenticate, adminOnly, async (req, res, next) => {
 // ── UPDATE PRODUCT (Admin only) ──
 router.put('/:id', authenticate, adminOnly, async (req, res, next) => {
   try {
-    const { id } = req.params
-    // 1. Separate the images from the rest of the data
+    const { id } = req.params;
+    
+    // 1. Separate images so we can clean them
     const { images, ...restOfData } = req.body;
 
-    // 2. Clean the images (The Genius Line)
+    // 2. Clean the images
     const cleanedImages = (images || []).filter(
       (url) => url && typeof url === 'string' && url.trim()
     );
 
-
+    // 3. Update Prisma (Notice the ... dots!)
     const product = await prisma.product.update({
       where: { id },
-      data: {req.body,
-      images: cleanedImages // Overwrites with only valid image links
-    },
+      data: {
+        ...restOfData,         // Take everything EXCEPT the old images
+        images: cleanedImages  // Add the cleaned images
+      },
       include: {
         category: { select: { id: true, name: true, slug: true } }
       }
-    })
+    });
 
-    res.json({ message: 'Product updated successfully.', product })
+    res.json({ message: 'Product updated successfully.', product });
 
   } catch (error) {
-    next(error)
+    next(error);
   }
-})
+});
 
 // ── DELETE PRODUCT (Admin only) ──
 router.delete('/:id', authenticate, adminOnly, async (req, res, next) => {
