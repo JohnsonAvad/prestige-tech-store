@@ -145,7 +145,7 @@ router.post('/', authenticate, adminOnly, async (req, res, next) => {
   description: req.body.description || '',
   specs: req.body.specs || {},
   stock: parseInt(req.body.stock) || 10,
-  images: req.body.images || [],
+  images: cleanedImages, 
   isFeatured: req.body.isFeatured || false,
   isNewArrival: req.body.isNewArrival || false,
   tags: req.body.tags || [],
