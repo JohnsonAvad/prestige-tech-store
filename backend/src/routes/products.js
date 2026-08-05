@@ -10,6 +10,8 @@ const prisma = new PrismaClient()
 // ── GET ALL PRODUCTS (with filters, sort, pagination) ──
 router.get('/', async (req, res, next) => {
   try {
+     const cleanedImages = (req.body.images || []).filter(url => url && typeof url === 'string' && url.trim());
+
     const {
       category,
       brand,
