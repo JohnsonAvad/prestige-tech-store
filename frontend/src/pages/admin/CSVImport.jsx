@@ -94,7 +94,9 @@ export default function CSVImport() {
           category = categories[0]
         }
 
-        const images = [row.image1, row.image2].filter(Boolean)
+       const images = [row.image_url, row.image, row.image1]
+  .filter(url => url && typeof url === 'string' && url.trim() !== '')
+  .map(url => url.trim());
 
         await api.post('/products', {
           name: row.name,
