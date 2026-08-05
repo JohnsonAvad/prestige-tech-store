@@ -177,10 +177,20 @@ router.post('/', authenticate, adminOnly, async (req, res, next) => {
 router.put('/:id', authenticate, adminOnly, async (req, res, next) => {
   try {
     const { id } = req.params
+    // 1. Separate the images from the rest of the data
+    const { images, ...restOfData } = req.body;
+
+    // 2. Clean the images (The Genius Line)
+    const cleanedImages = (images || []).filter(
+      (url) => url && typeof url === 'string' && url.trim()
+    );
+
 
     const product = await prisma.product.update({
       where: { id },
-      data: req.body,
+      data: {req.body,
+      images: cleanedImages // Overwrites with only valid image links
+    },
       include: {
         category: { select: { id: true, name: true, slug: true } }
       }
