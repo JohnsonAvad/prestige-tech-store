@@ -10,8 +10,7 @@ const prisma = new PrismaClient()
 // ── GET ALL PRODUCTS (with filters, sort, pagination) ──
 router.get('/', async (req, res, next) => {
   try {
-     const cleanedImages = (req.body.images || []).filter(url => url && typeof url === 'string' && url.trim());
-
+    
     const {
       category,
       brand,
@@ -134,6 +133,8 @@ router.get('/:id', async (req, res, next) => {
 // ── CREATE PRODUCT (Admin only) ──
 router.post('/', authenticate, adminOnly, async (req, res, next) => {
   try {
+     const cleanedImages = (req.body.images || []).filter(url => url && typeof url === 'string' && url.trim());
+
    const data = {
   name: req.body.name || 'Unnamed Product',
   brand: req.body.brand || 'Unknown',
