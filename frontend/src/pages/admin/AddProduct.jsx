@@ -8,7 +8,7 @@ export default function AddProduct() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const [imageUrls, setImageUrls] = useState([''])
+  const [imageUrls, setImageUrls] = useState([])
   const [specs, setSpecs] = useState([{ key: '', value: '' }])
   const navigate = useNavigate()
 
