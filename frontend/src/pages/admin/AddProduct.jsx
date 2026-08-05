@@ -70,7 +70,7 @@ export default function AddProduct() {
         if (s.key && s.value) specsObj[s.key] = s.value
       })
 
-      const images = imageUrls.filter(url => url.trim())
+      const images = (imageUrls || []).filter(url => url && typeof url === 'string' && url.trim());
 
       const data = {
         name: form.name,
