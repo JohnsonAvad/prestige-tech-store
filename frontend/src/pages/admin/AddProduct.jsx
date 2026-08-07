@@ -97,49 +97,63 @@ export default function AddProduct() {
     setSpecs(updated)
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError('');
 
-    try {
-      const specsObj = {}
-      specs.forEach(s => {
-        if (s.key && s.value) specsObj[s.key] = s.value
-      })
+  try {
+    // 1. Process Specs
+    const specsObj = {};
+    specs.forEach(s => {
+      if (s.key && s.value) specsObj[s.key] = s.value;
+    });
 
-      const images = (imageUrls || []).filter(url => url && typeof url === 'string' && url.trim());
+    // 2. Clean Images (The Genius Line)
+    const images = (imageUrls || []).filter(url => url && typeof url === 'string' && url.trim());
 
-      const data = {
-        name: form.name,
-        brand: form.brand,
-        categoryId: form.categoryId,
-        sku: form.sku || `SKU-${Date.now()}`,
-        price: parseFloat(form.price),
-        comparePrice: form.comparePrice ? parseFloat(form.comparePrice) : undefined,
-        description: form.description,
-        stock: parseInt(form.stock) || 0,
-        isFeatured: form.isFeatured,
-        isNewArrival: form.isNewArrival,
-        images,
-        specs: specsObj,
-        tags: form.tags ? form.tags.split(',').map(t => t.trim()) : [],
-      }
+    // 3. Prepare the Data Object
+    const data = {
+      name: form.name,
+      brand: form.brand,
+      categoryId: form.categoryId,
+      sku: form.sku || (id ? undefined : `SKU-${Date.now()}`), // Don't generate new SKU if editing
+      price: parseFloat(form.price) || 0,
+      comparePrice: form.comparePrice ? parseFloat(form.comparePrice) : undefined,
+      description: form.description,
+      stock: parseInt(form.stock) || 0,
+      isFeatured: form.isFeatured,
+      isNewArrival: form.isNewArrival,
+      images,
+      specs: specsObj,
+      tags: form.tags ? form.tags.split(',').map(t => t.trim()) : [],
+    };
 
+    // 4. CHOOSE BETWEEN UPDATE (PUT) OR CREATE (POST)
+    if (id) {
+      // EDITING MODE
+      await api.put(`/products/${id}`, data, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setSuccess('Product updated successfully!');
+    } else {
+      // ADDING MODE
       await api.post('/products', data, {
         headers: { Authorization: `Bearer ${token}` }
-      })
-
-      setSuccess(true)
-      setTimeout(() => navigate('/admin/products'), 1500)
-
-    } catch (err) {
-      setError(err.response?.data?.error || 'Failed to create product.')
-    } finally {
-      setLoading(false)
+      });
+      setSuccess('Product created successfully!');
     }
-  }
 
+    // 5. Redirect after success
+    setTimeout(() => navigate('/admin/products'), 1500);
+
+  } catch (err) {
+    console.error(err);
+    setError(err.response?.data?.error || 'Failed to save product.');
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="min-h-screen bg-gray-950">
 
@@ -472,12 +486,14 @@ export default function AddProduct() {
               Cancel
             </Link>
             <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 bg-gradient-to-r from-blue-600 to-green-600 text-white font-black py-3 rounded-xl hover:opacity-90 transition-all disabled:opacity-50"
-            >
-              {loading ? 'Creating Product...' : 'Create Product'}
-            </button>
+  type="submit"
+  disabled={loading}
+  className="flex-1 bg-gradient-to-r from-blue-600 to-green-600 text-white font-black py-3 rounded-xl hover:opacity-90 transition-all disabled:opacity-50"
+>
+  {loading 
+    ? (id ? 'Updating Product...' : 'Creating Product...') 
+    : (id ? 'Update Product' : 'Create Product')}
+</button>
           </div>
 
         </form>
