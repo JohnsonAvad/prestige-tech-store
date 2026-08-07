@@ -115,7 +115,7 @@ const handleImageUrl = (index, value) => {
     });
 
     // 2. Clean Images (The Genius Line)
-    const images = (imageUrls || []).filter(url => url && typeof url === 'string' && url.trim());
+    const finalImages = imageUrls.filter(url => url && typeof url === 'string' && url.trim() !== "");
 
     // 3. Prepare the Data Object
     const data = {
@@ -129,7 +129,7 @@ const handleImageUrl = (index, value) => {
       stock: parseInt(form.stock) || 0,
       isFeatured: form.isFeatured,
       isNewArrival: form.isNewArrival,
-      images,
+      images: finalImages,
       specs: specsObj,
       tags: form.tags ? form.tags.split(',').map(t => t.trim()) : [],
     };
