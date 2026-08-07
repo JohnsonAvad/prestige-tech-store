@@ -84,12 +84,17 @@ export default function AddProduct() {
       [name]: type === 'checkbox' ? checked : value
     }))
   }
-
-  const handleImageUrl = (index, value) => {
-    const updated = [...imageUrls]
-    updated[index] = value
-    setImageUrls(updated)
-  }
+const handleImageUrl = (index, value) => {
+  const updated = [...imageUrls];
+  updated[index] = value;
+  setImageUrls(updated);
+  
+  // If your form state also tracks images, update it here too:
+  setForm(prev => ({
+    ...prev,
+    images: updated.filter(u => u.trim() !== '')
+  }));
+};
 
   const handleSpec = (index, field, value) => {
     const updated = [...specs]
