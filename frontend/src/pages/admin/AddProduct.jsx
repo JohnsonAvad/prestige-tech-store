@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import api from '../../utils/api'
 
 export default function AddProduct() {
+  const { id } = useParams(); 
   const [uploadingIndex, setUploadingIndex] = useState(null)
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(false)
@@ -29,6 +30,43 @@ export default function AddProduct() {
   })
 
   useEffect(() => {
+    if (id) {
+      const fetchProduct = async () => {
+        try {
+          const response = await api.get(`/products/${id}`);
+          // Verify if your backend sends { product: {...} } or just {...}
+          const p = response.data.product || response.data;
+
+          // 1. UPDATE THE FORM OBJECT
+          setForm({
+            name: p.name || '',
+            brand: p.brand || '',
+            categoryId: p.categoryId || '',
+            sku: p.sku || '',
+            price: p.price || '',
+            comparePrice: p.comparePrice || '',
+            description: p.description || '',
+            stock: p.stock || '',
+            isFeatured: p.isFeatured || false,
+            isNewArrival: p.isNewArrival || false,
+            tags: p.tags ? p.tags.join('; ') : '', // Convert array back to string for input
+          });
+
+          // 2. UPDATE SEPARATE STATES
+          setImageUrls(p.images && p.images.length > 0 ? p.images : ['']);
+          
+          // Handle specs if your backend returns them
+          if (p.specs) setSpecs(p.specs);
+
+        } catch (error) {
+          console.error("Fetch error:", error);
+          // toast.error("Failed to load product details");
+        }
+      };
+      fetchProduct();
+    }
+  }, [id]); // This runs whenever the ID in the URL changes
+    
   if (!token) {
     navigate('/admin/login')
     return
