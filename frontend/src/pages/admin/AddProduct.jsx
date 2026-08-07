@@ -2,18 +2,9 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import api from '../../utils/api'
 
-export default function AddProduct() {
-  const { id } = useParams(); 
-  const [uploadingIndex, setUploadingIndex] = useState(null)
-  const [categories, setCategories] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
-  const [imageUrls, setImageUrls] = useState([])
-  const [specs, setSpecs] = useState([{ key: '', value: '' }])
-  const navigate = useNavigate()
-
-  const token = localStorage.getItem('admin_token')
+const { id } = useParams();
+  const navigate = useNavigate();
+  const token = localStorage.getItem('admin_token');
 
   const [form, setForm] = useState({
     name: '',
@@ -27,140 +18,115 @@ export default function AddProduct() {
     isFeatured: false,
     isNewArrival: false,
     tags: '',
-  })
-useEffect(() => {
-  if (id) {
-    const fetchProduct = async () => {
-      try {
-        const response = await api.get(`/products/${id}`);
-        // IMPORTANT: Some APIs return { product: {...} }, others return just {...}
-        const p = response.data.product || response.data;
+  });
 
-        // We must map the database values into your 'form' state object
-        setForm({
-          name: p.name || '',
-          brand: p.brand || '',
-          categoryId: p.categoryId || '',
-          sku: p.sku || '',
-          price: p.price || '',
-          comparePrice: p.comparePrice || '',
-          description: p.description || '',
-          // MAPPING: Ensure this matches what you saved from the CSV
-          stock: p.stock || p.stock_quantity || '', 
-          isFeatured: p.isFeatured || false,
-          isNewArrival: p.isNewArrival || false,
-          tags: Array.isArray(p.tags) ? p.tags.join(', ') : (p.tags || ''),
-        });
+  const [uploadingIndex, setUploadingIndex] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [imageUrls, setImageUrls] = useState(['']);
+  const [specs, setSpecs] = useState([{ key: '', value: '' }]);
 
-        // Set the images separately since you have a separate state for them
-        setImageUrls(p.images && p.images.length > 0 ? p.images : ['']);
-        
-        // If you have specs
-        if (p.specs) {
-          const specArray = Object.entries(p.specs).map(([key, value]) => ({ key, value }));
-          setSpecs(specArray.length > 0 ? specArray : [{ key: '', value: '' }]);
-        }
+  // 1. Fetch Categories
+  useEffect(() => {
+    api.get('/categories')
+      .then(res => {
+        const data = res.data.categories || res.data;
+        setCategories(Array.isArray(data) ? data : []);
+      })
+      .catch(err => console.error('Categories error:', err));
+  }, []);
 
-      } catch (err) {
-        console.error("Error fetching product:", err);
-        setError("Could not load product details.");
-      }
-    };
-    fetchProduct();
-  }
-}, [id]); // This ensures it runs every time you click a different product
-  if (!token) {
-    navigate('/admin/login')
-    return
-  }
-  fetch('https://prestige-tech-store-api.vercel.app/api/categories')
-    .then(res => res.json())
-    .then(data => setCategories(data.categories || []))
-    .catch(err => console.log('Categories error:', err))
-}, [])
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setForm(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }))
-  }
-const handleImageUrl = (index, value) => {
-  const updated = [...imageUrls];
-  updated[index] = value;
-  setImageUrls(updated);
-  
-  // If your form state also tracks images, update it here too:
-  setForm(prev => ({
-    ...prev,
-    images: updated.filter(u => u.trim() !== '')
-  }));
-};
-
-  const handleSpec = (index, field, value) => {
-    const updated = [...specs]
-    updated[index][field] = value
-    setSpecs(updated)
-  }
-
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
-
-  try {
-    // 1. Process Specs
-    const specsObj = {};
-    specs.forEach(s => {
-      if (s.key && s.value) specsObj[s.key] = s.value;
-    });
-
-    // 2. Clean Images (The Genius Line)
-    const finalImages = imageUrls.filter(url => url && typeof url === 'string' && url.trim() !== "");
-
-    // 3. Prepare the Data Object
-    const data = {
-      name: form.name,
-      brand: form.brand,
-      categoryId: form.categoryId,
-      sku: form.sku || (id ? undefined : `SKU-${Date.now()}`), // Don't generate new SKU if editing
-      price: parseFloat(form.price) || 0,
-      comparePrice: form.comparePrice ? parseFloat(form.comparePrice) : undefined,
-      description: form.description,
-      stock: parseInt(form.stock) || 0,
-      isFeatured: form.isFeatured,
-      isNewArrival: form.isNewArrival,
-      images: finalImages,
-      specs: specsObj,
-      tags: form.tags ? form.tags.split(',').map(t => t.trim()) : [],
-    };
-
-    // 4. CHOOSE BETWEEN UPDATE (PUT) OR CREATE (POST)
+  // 2. Fetch Product Details if Editing (The Fix for empty boxes)
+  useEffect(() => {
     if (id) {
-      // EDITING MODE
-      await api.put(`/products/${id}`, data, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setSuccess('Product updated successfully!');
-    } else {
-      // ADDING MODE
-      await api.post('/products', data, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setSuccess('Product created successfully!');
+      const fetchProduct = async () => {
+        try {
+          const res = await api.get(`/products/${id}`);
+          const p = res.data.product || res.data;
+
+          setForm({
+            name: p.name || '',
+            brand: p.brand || '',
+            categoryId: p.categoryId || p.category?.id || '',
+            sku: p.sku || '',
+            price: p.price || '',
+            comparePrice: p.comparePrice || '',
+            description: p.description || '',
+            stock: p.stock !== undefined ? p.stock : (p.stock_quantity || ''),
+            isFeatured: p.isFeatured || false,
+            isNewArrival: p.isNewArrival || false,
+            tags: Array.isArray(p.tags) ? p.tags.join(', ') : (p.tags || ''),
+          });
+
+          if (p.images && p.images.length > 0) {
+            setImageUrls(p.images);
+          }
+          if (p.specs) {
+            const sArray = Object.entries(p.specs).map(([key, value]) => ({ key, value }));
+            setSpecs(sArray.length > 0 ? sArray : [{ key: '', value: '' }]);
+          }
+        } catch (err) {
+          console.error('Fetch product error:', err);
+          setError('Failed to load product details.');
+        }
+      };
+      fetchProduct();
     }
+  }, [id]);
 
-    // 5. Redirect after success
-    setTimeout(() => navigate('/admin/products'), 1500);
+  // 3. Auth Guard
+  useEffect(() => {
+    if (!token) {
+      navigate('/admin/login');
+    }
+  }, [token, navigate]);
 
-  } catch (err) {
-    console.error(err);
-    setError(err.response?.data?.error || 'Failed to save product.');
-  } finally {
-    setLoading(false);
-  }
-};
+  const handleImageUrl = (index, value) => {
+    const updated = [...imageUrls];
+    updated[index] = value;
+    setImageUrls(updated);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const specsObj = {};
+      specs.forEach(s => {
+        if (s.key && s.value) specsObj[s.key] = s.value;
+      });
+
+      const cleanImages = (imageUrls || []).filter(url => url && typeof url === 'string' && url.trim() !== '');
+
+      const data = {
+        ...form,
+        price: parseFloat(form.price) || 0,
+        stock: parseInt(form.stock) || 0,
+        images: cleanImages,
+        specs: specsObj,
+        tags: form.tags ? form.tags.split(',').map(t => t.trim()) : [],
+      };
+
+      if (id) {
+        await api.put(`/products/${id}`, data, { headers: { Authorization: `Bearer ${token}` } });
+        setSuccess('Product updated successfully!');
+      } else {
+        await api.post('/products', data, { headers: { Authorization: `Bearer ${token}` } });
+        setSuccess('Product created successfully!');
+      }
+
+      setTimeout(() => navigate('/admin/products'), 1500);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to save product.');
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-950">
 
