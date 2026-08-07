@@ -28,45 +28,47 @@ export default function AddProduct() {
     isNewArrival: false,
     tags: '',
   })
+useEffect(() => {
+  if (id) {
+    const fetchProduct = async () => {
+      try {
+        const response = await api.get(`/products/${id}`);
+        // IMPORTANT: Some APIs return { product: {...} }, others return just {...}
+        const p = response.data.product || response.data;
 
-  useEffect(() => {
-    if (id) {
-      const fetchProduct = async () => {
-        try {
-          const response = await api.get(`/products/${id}`);
-          // Verify if your backend sends { product: {...} } or just {...}
-          const p = response.data.product || response.data;
+        // We must map the database values into your 'form' state object
+        setForm({
+          name: p.name || '',
+          brand: p.brand || '',
+          categoryId: p.categoryId || '',
+          sku: p.sku || '',
+          price: p.price || '',
+          comparePrice: p.comparePrice || '',
+          description: p.description || '',
+          // MAPPING: Ensure this matches what you saved from the CSV
+          stock: p.stock || p.stock_quantity || '', 
+          isFeatured: p.isFeatured || false,
+          isNewArrival: p.isNewArrival || false,
+          tags: Array.isArray(p.tags) ? p.tags.join(', ') : (p.tags || ''),
+        });
 
-          // 1. UPDATE THE FORM OBJECT
-          setForm({
-            name: p.name || '',
-            brand: p.brand || '',
-            categoryId: p.categoryId || '',
-            sku: p.sku || '',
-            price: p.price || '',
-            comparePrice: p.comparePrice || '',
-            description: p.description || '',
-            stock: p.stock || '',
-            isFeatured: p.isFeatured || false,
-            isNewArrival: p.isNewArrival || false,
-            tags: p.tags ? p.tags.join('; ') : '', // Convert array back to string for input
-          });
-
-          // 2. UPDATE SEPARATE STATES
-          setImageUrls(p.images && p.images.length > 0 ? p.images : ['']);
-          
-          // Handle specs if your backend returns them
-          if (p.specs) setSpecs(p.specs);
-
-        } catch (error) {
-          console.error("Fetch error:", error);
-          // toast.error("Failed to load product details");
+        // Set the images separately since you have a separate state for them
+        setImageUrls(p.images && p.images.length > 0 ? p.images : ['']);
+        
+        // If you have specs
+        if (p.specs) {
+          const specArray = Object.entries(p.specs).map(([key, value]) => ({ key, value }));
+          setSpecs(specArray.length > 0 ? specArray : [{ key: '', value: '' }]);
         }
-      };
-      fetchProduct();
-    }
-  }, [id]); // This runs whenever the ID in the URL changes
-    
+
+      } catch (err) {
+        console.error("Error fetching product:", err);
+        setError("Could not load product details.");
+      }
+    };
+    fetchProduct();
+  }
+}, [id]); // This ensures it runs every time you click a different product
   if (!token) {
     navigate('/admin/login')
     return
