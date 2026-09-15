@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, useParams, Link } from 'react-router-dom'
 import api from '../../utils/api'
+
+export default function AddProduct() {
 
 const { id } = useParams();
   const navigate = useNavigate();

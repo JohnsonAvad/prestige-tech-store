@@ -1,7 +1,10 @@
 {
+  "devCommand": "vite --port $PORT",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ]

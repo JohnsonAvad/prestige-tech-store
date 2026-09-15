@@ -33,3 +33,7 @@ desktop.ini
 # ── Prisma ──
 prisma/dev.db
 prisma/dev.db-journal
+
+# Vercel
+.vercel
+.env*

@@ -20,6 +20,26 @@ const DELIVERY_AREAS = [
 
 const STEPS = ['Delivery', 'Payment', 'Review']
 
+// Maps the UI's payment method value to what the payments API expects
+const PROVIDER_MAP = {
+  MTN_MOMO: 'mtn',
+  AIRTEL_MONEY: 'airtel',
+}
+
+// Converts a locally-typed number like "0771234567" into "256771234567",
+// which is the format MTN/Airtel's APIs expect. Leaves already-international
+// numbers (starting with 256) untouched.
+function toInternationalPhone(localNumber) {
+  const digits = localNumber.replace(/\D/g, '')
+  if (digits.startsWith('256')) return digits
+  if (digits.startsWith('0')) return '256' + digits.slice(1)
+  return '256' + digits
+}
+
+const MAX_POLL_ATTEMPTS = 20      // ~60 seconds of polling at 3s intervals
+const POLL_INTERVAL_MS = 3000
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+
 export default function CheckoutPage() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
@@ -39,6 +59,10 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState('')
   const [momoNumber, setMomoNumber] = useState('')
 
+  // 'idle' | 'creating-order' | 'initiating' | 'waiting' | 'failed'
+  const [paymentStatus, setPaymentStatus] = useState('idle')
+  const [paymentAttempts, setPaymentAttempts] = useState(0)
+
   const subtotal = getSubtotal()
   const selectedArea = DELIVERY_AREAS.find(a => a.name === delivery.area)
   const deliveryFee = selectedArea?.fee || 0
@@ -48,11 +72,29 @@ export default function CheckoutPage() {
     setDelivery(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
+  const pollPaymentStatus = async (provider, referenceId) => {
+    for (let attempt = 1; attempt <= MAX_POLL_ATTEMPTS; attempt++) {
+      setPaymentAttempts(attempt)
+      await sleep(POLL_INTERVAL_MS)
+
+      const res = await fetch(`/api/payments/status/${provider}/${referenceId}`)
+      const data = await res.json()
+
+      if (data.status === 'SUCCESSFUL') return { success: true }
+      if (data.status === 'FAILED') return { success: false, reason: data.reason }
+      // otherwise still PENDING — loop again
+    }
+    return { success: false, reason: 'TIMEOUT' }
+  }
+
   const handlePlaceOrder = async () => {
     if (!token) { navigate('/login?redirect=/checkout'); return }
     setLoading(true)
     setError('')
+    setPaymentStatus('creating-order')
+
     try {
+      // 1. Create the order in your existing backend
       const orderData = {
         items: items.map(item => ({
           productId: item.id,
@@ -70,21 +112,64 @@ export default function CheckoutPage() {
         notes: delivery.notes,
         momoNumber,
       }
-      const res = await fetch('https://prestige-tech-store-api.vercel.app/api/orders', {
+
+      const orderRes = await fetch('https://prestige-tech-store-api.vercel.app/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(orderData)
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to place order')
-      clearCart()
-      navigate('/order-confirmation/' + data.order.orderNumber)
+      const orderResult = await orderRes.json()
+      if (!orderRes.ok) throw new Error(orderResult.error || 'Failed to place order')
+
+      const orderNumber = orderResult.order.orderNumber
+
+      // 2. Kick off the actual mobile money payment request
+      setPaymentStatus('initiating')
+      const provider = PROVIDER_MAP[paymentMethod]
+
+      const payRes = await fetch('/api/payments/initiate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider,
+          phone: toInternationalPhone(momoNumber),
+          amount: total,
+          orderId: orderNumber,
+        }),
+      })
+      const payResult = await payRes.json()
+      if (!payRes.ok) throw new Error(payResult.error || 'Failed to start payment')
+
+      // 3. Poll until the customer approves/rejects, or a final result comes back
+      setPaymentStatus('waiting')
+      const outcome = await pollPaymentStatus(provider, payResult.referenceId)
+
+      if (outcome.success) {
+        clearCart()
+        navigate('/order-confirmation/' + orderNumber)
+      } else {
+        setPaymentStatus('failed')
+        setError(
+          outcome.reason === 'TIMEOUT'
+            ? "We haven't received confirmation yet. Your order has been placed — check your order status shortly, or contact support if this persists."
+            : `Payment was not completed (${outcome.reason || 'declined'}). Please try again.`
+        )
+      }
     } catch (err) {
+      setPaymentStatus('failed')
       setError(err.message)
     } finally {
       setLoading(false)
     }
   }
+
+  const placeOrderLabel = {
+    idle: `Place Order · ${formatPrice(total)}`,
+    'creating-order': 'Placing order...',
+    initiating: 'Sending payment request...',
+    waiting: `Waiting for approval on ${momoNumber}... (${paymentAttempts * 3}s)`,
+    failed: `Try Again · ${formatPrice(total)}`,
+  }[paymentStatus] || `Place Order · ${formatPrice(total)}`
 
   // Input style reused throughout
   const inputStyle = {
@@ -386,6 +471,15 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
+                  {/* Waiting-for-approval banner */}
+                  {paymentStatus === 'waiting' && (
+                    <div style={{ background: '#fefce8', border: '1px solid #fde68a', borderRadius: '10px', padding: '14px' }}>
+                      <p style={{ color: '#a16207', fontSize: '13px', fontWeight: 600 }}>
+                        📱 Check your phone ({momoNumber}) and approve the payment prompt.
+                      </p>
+                    </div>
+                  )}
+
                   {error && (
                     <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '10px', padding: '12px' }}>
                       <p style={{ color: '#ef4444', fontSize: '13px' }}>{error}</p>
@@ -393,7 +487,7 @@ export default function CheckoutPage() {
                   )}
 
                   <div style={{ display: 'flex', gap: '12px' }}>
-                    <button onClick={() => setStep(2)} style={{ flex: 1, background: '#eff6ff', border: '2px solid #bfdbfe', color: '#1d4ed8', fontWeight: 700, padding: '13px', borderRadius: '12px', cursor: 'pointer', fontSize: '14px' }}>
+                    <button onClick={() => setStep(2)} disabled={loading} style={{ flex: 1, background: '#eff6ff', border: '2px solid #bfdbfe', color: '#1d4ed8', fontWeight: 700, padding: '13px', borderRadius: '12px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '14px' }}>
                       ← Back
                     </button>
                     <button
@@ -401,7 +495,7 @@ export default function CheckoutPage() {
                       disabled={loading}
                       style={{ flex: 2, background: loading ? '#64748b' : '#16a34a', color: 'white', fontWeight: 800, padding: '13px', borderRadius: '12px', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '15px' }}
                     >
-                      {loading ? 'Placing Order...' : `Place Order · ${formatPrice(total)}`}
+                      {placeOrderLabel}
                     </button>
                   </div>
                 </div>
