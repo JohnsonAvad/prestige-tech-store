@@ -10,7 +10,7 @@ import CartDrawer from '../../components/shop/CartDrawer'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-white">
       <Navbar />
       <CartDrawer />
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 space-y-12">
