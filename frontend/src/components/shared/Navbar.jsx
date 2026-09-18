@@ -37,7 +37,7 @@ export default function Navbar() {
     <header style={{ position: 'sticky', top: 0, zIndex: 100 }}>
 
       {/* Green navbar */}
-      <div style={{ background: '#4974a5' }}>
+      <div style={{ background: '#1D4ED8' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', gap: '16px', height: '60px' }}>
 
           {/* Logo */}
