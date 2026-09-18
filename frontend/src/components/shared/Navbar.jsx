@@ -42,7 +42,7 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', flexShrink: 0 }}>
-            <div style={{ width: '36px', height: '36px', background: 'white', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#16a34a', fontSize: '17px' }}>P</div>
+            <div style={{ width: '36px', height: '36px', background: 'white', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#16a34a', fontSize: '17px' }}>https://ibcbcyilhostuqslzpaw.supabase.co/storage/v1/object/public/Products/Prestige%20Tech%20Store%20Logo.jpeg</div>
             <div>
               <div style={{ fontWeight: 900, color: 'white', fontSize: '14px', lineHeight: 1 }}>PRESTIGE</div>
               <div style={{ color: '#bbf7d0', fontSize: '9px', letterSpacing: '2px' }}>TECHSTORE</div>
