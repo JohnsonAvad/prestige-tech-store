@@ -111,7 +111,7 @@ export default function CartDrawer() {
         {/* GREEN ITEMS SECTION */}
         <div style={{
           flex: 1, overflowY: 'auto',
-          background: '#16a34a',
+          background: '#1D4ED8',
           padding: items.length === 0 ? '0' : '16px 20px',
           display: 'flex', flexDirection: 'column', gap: '10px'
         }}>
@@ -120,7 +120,7 @@ export default function CartDrawer() {
               flex: 1, display: 'flex', flexDirection: 'column',
               alignItems: 'center', justifyContent: 'center',
               textAlign: 'center', padding: '48px 24px',
-              background: '#16a34a'
+              background: '#1D4ED8'
             }}>
               <div style={{
                 width: '72px', height: '72px',
@@ -142,7 +142,7 @@ export default function CartDrawer() {
               <button
                 onClick={closeCart}
                 style={{
-                  background: 'white', color: '#15803d',
+                  background: 'white', color: '#1D4ED8',
                   fontWeight: 700, fontSize: '14px',
                   padding: '12px 28px', borderRadius: '12px',
                   border: 'none', cursor: 'pointer'
