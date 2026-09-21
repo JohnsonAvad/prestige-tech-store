@@ -11,7 +11,7 @@ export default function Footer() {
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-green-600 rounded-xl flex items-center justify-center">
-                <span className="font-black text-white">   <img src="https://ibcbcyilhostuqslzpaw.supabase.co/storage/v1/object/public/Products/Prestige%20Tech%20Store%20Logo.jpeg"
+                <span className="font-black text-white">   <img src="/logo.jpeg"
       alt="Prestige logo"
       style={{ width: '100%', height: '100%', objectFit: 'contain' }}
     /></span>
