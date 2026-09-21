@@ -83,7 +83,7 @@ export default function NewArrivals() {
                   {product.comparePrice && <span style={{ fontSize: '11px', color: '#cbd5e1', textDecoration: 'line-through', marginLeft: '8px', fontWeight: 400 }}>{formatPrice(product.comparePrice)}</span>}
                 </div>
               </Link>
-              <button onClick={() => addItem(product)} style={{ width: '100%', background: '#16a34a', color: 'white', fontSize: '11px', fontWeight: 700, padding: '10px', borderRadius: '10px', border: 'none', cursor: 'pointer', marginTop: '10px' }}>
+              <button onClick={() => addItem(product)} style={{ width: '100%', background: '#1D4ED8', color: 'white', fontSize: '11px', fontWeight: 700, padding: '10px', borderRadius: '10px', border: 'none', cursor: 'pointer', marginTop: '10px' }}>
                 Add to Cart
               </button>
             </div>

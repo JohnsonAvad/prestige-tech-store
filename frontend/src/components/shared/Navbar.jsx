@@ -36,13 +36,17 @@ export default function Navbar() {
   return (
     <header style={{ position: 'sticky', top: 0, zIndex: 100 }}>
 
-      {/* Green navbar */}
+      {/* Blue navbar */}
       <div style={{ background: '#1D4ED8' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', gap: '16px', height: '60px' }}>
 
           {/* Logo */}
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', flexShrink: 0 }}>
-            <div style={{ width: '36px', height: '36px', background: 'white', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#16a34a', fontSize: '17px' }}>https://ibcbcyilhostuqslzpaw.supabase.co/storage/v1/object/public/Products/Prestige%20Tech%20Store%20Logo.jpeg</div>
+            <div style={{ width: '36px', height: '36px', background: 'white', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#16a34a', fontSize: '17px' }}> <img
+      src="https://ibcbcyilhostuqslzpaw.supabase.co/storage/v1/object/public/Products/Prestige%20Tech%20Store%20Logo.jpeg"
+      alt="Prestige logo"
+      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+    /></div>
             <div>
               <div style={{ fontWeight: 900, color: 'white', fontSize: '14px', lineHeight: 1 }}>PRESTIGE</div>
               <div style={{ color: '#bbf7d0', fontSize: '9px', letterSpacing: '2px' }}>TECHSTORE</div>
