@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-green-600 rounded-xl flex items-center justify-center">
+              <div className="w-20 h-20 bg-white rounded-xl flex items-center justify-center">
                 <span className="font-black text-white">   <img src="/logo.jpeg"
       alt="Prestige logo"
       style={{ width: '100%', height: '100%', objectFit: 'contain' }}
