@@ -42,7 +42,7 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none', flexShrink: 0 }}>
-            <div style={{ width: '80px', height: '80px', background: 'white', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#16a34a', fontSize: '17px' }}> <img
+            <div style={{ width: '64px', height: '64px', background: 'white', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#16a34a', fontSize: '17px' }}> <img
       src="logo.jpeg"
       alt="Prestige logo"
       style={{ width: '100%', height: '100%', objectFit: 'contain' }}
