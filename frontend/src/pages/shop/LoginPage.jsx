@@ -56,7 +56,7 @@ export default function LoginPage() {
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{ width: '56px', height: '56px', background: '#16a34a', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div style={{ width: '56px', height: '56px', background: '#1D4ED8', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
@@ -141,7 +141,7 @@ export default function LoginPage() {
           <div style={{ background: '#eff6ff', borderTop: '2px solid #bfdbfe', padding: '16px 24px', textAlign: 'center' }}>
             <p style={{ fontSize: '13px', color: '#1d4ed8' }}>
               Do not have an account?{' '}
-              <Link to="/register" style={{ fontWeight: 700, color: '#16a34a', textDecoration: 'none' }}>
+              <Link to="/register" style={{ fontWeight: 700, color: '#1D4ED8', textDecoration: 'none' }}>
                 Create one free
               </Link>
             </p>
