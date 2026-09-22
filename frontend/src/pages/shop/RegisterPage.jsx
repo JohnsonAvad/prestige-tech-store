@@ -79,7 +79,7 @@ export default function RegisterPage() {
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{ width: '56px', height: '56px', background: '#16a34a', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div style={{ width: '56px', height: '56px', background: '#1D4ED8', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
@@ -92,7 +92,7 @@ export default function RegisterPage() {
         <div style={{ borderRadius: '20px', border: '2px solid #bfdbfe', overflow: 'hidden' }}>
 
           {/* Green header */}
-          <div style={{ background: '#16a34a', padding: '16px 24px' }}>
+          <div style={{ background: '#1D4ED8', padding: '16px 24px' }}>
             <p style={{ fontSize: '13px', fontWeight: 700, color: 'white' }}>Your Information</p>
           </div>
 
@@ -187,7 +187,7 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={loading}
-                style={{ width: '100%', background: '#16a34a', color: 'white', fontWeight: 800, padding: '14px', borderRadius: '12px', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '15px', opacity: loading ? 0.7 : 1 }}
+                style={{ width: '100%', background: '#1D4ED8', color: 'white', fontWeight: 800, padding: '14px', borderRadius: '12px', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '15px', opacity: loading ? 0.7 : 1 }}
               >
                 {loading ? 'Creating account...' : 'Create My Account'}
               </button>
@@ -199,7 +199,7 @@ export default function RegisterPage() {
           <div style={{ background: '#eff6ff', borderTop: '2px solid #bfdbfe', padding: '16px 24px', textAlign: 'center' }}>
             <p style={{ fontSize: '13px', color: '#1d4ed8' }}>
               Already have an account?{' '}
-              <Link to="/login" style={{ fontWeight: 700, color: '#16a34a', textDecoration: 'none' }}>
+              <Link to="/login" style={{ fontWeight: 700, color: '#1D4ED8', textDecoration: 'none' }}>
                 Sign in here
               </Link>
             </p>
