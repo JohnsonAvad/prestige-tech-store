@@ -329,7 +329,7 @@ export default function CartDrawer() {
                 onClick={clearCart}
                 style={{
                   background: 'none', border: 'none',
-                  color: 'rgba(255,255,255,0.4)',
+                  color: 'rgba(255,255,255,1)',
                   fontSize: '11px', cursor: 'pointer', textAlign: 'center'
                 }}
               >
