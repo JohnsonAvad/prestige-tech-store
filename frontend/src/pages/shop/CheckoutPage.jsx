@@ -249,7 +249,7 @@ export default function CheckoutPage() {
               <div style={{ background: 'white', borderRadius: '20px', border: '2px solid #bfdbfe', overflow: 'hidden' }}>
 
                 {/* Step header */}
-                <div style={{ background: '#16a34a', padding: '18px 24px' }}>
+                <div style={{ background: '#1D4ED8', padding: '18px 24px' }}>
                   <h2 style={{ fontSize: '17px', fontWeight: 800, color: 'white' }}>Delivery Details</h2>
                   <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.75)', marginTop: '2px' }}>Where should we deliver your order?</p>
                 </div>
@@ -313,7 +313,7 @@ export default function CheckoutPage() {
                       setError('')
                       setStep(2)
                     }}
-                    style={{ width: '100%', background: '#16a34a', color: 'white', fontWeight: 800, padding: '14px', borderRadius: '12px', border: 'none', cursor: 'pointer', fontSize: '15px', marginTop: '20px' }}
+                    style={{ width: '100%', background: '#1D4ED8', color: 'white', fontWeight: 800, padding: '14px', borderRadius: '12px', border: 'none', cursor: 'pointer', fontSize: '15px', marginTop: '20px' }}
                   >
                     Continue to Payment →
                   </button>
@@ -507,7 +507,7 @@ export default function CheckoutPage() {
           <div style={{ position: 'sticky', top: '100px', borderRadius: '20px', border: '2px solid #bfdbfe', overflow: 'hidden' }}>
 
             {/* Green header */}
-            <div style={{ background: '#16a34a', padding: '16px 20px' }}>
+            <div style={{ background: '#1D4ED8', padding: '16px 20px' }}>
               <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'white' }}>Order Summary</h3>
             </div>
 
@@ -542,7 +542,7 @@ export default function CheckoutPage() {
             </div>
 
             {/* Green total */}
-            <div style={{ background: '#16a34a', padding: '14px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ background: '#1D4ED8', padding: '14px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '15px', fontWeight: 800, color: 'white' }}>Total</span>
               <span style={{ fontSize: '18px', fontWeight: 900, color: 'white' }}>{formatPrice(total)}</span>
             </div>

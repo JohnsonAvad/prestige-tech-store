@@ -289,7 +289,7 @@ export default function CartDrawer() {
               <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                 <span style={{ fontSize: '11px', fontWeight: 700, padding: '5px 12px', borderRadius: '8px', background: 'rgba(234,179,8,0.2)', color: '#fef08a', border: '1px solid rgba(234,179,8,0.5)' }}>MTN MoMo</span>
                 <span style={{ fontSize: '11px', fontWeight: 700, padding: '5px 12px', borderRadius: '8px', background: 'rgba(239,68,68,0.2)', color: '#fca5a5', border: '1px solid rgba(239,68,68,0.5)' }}>Airtel Money</span>
-                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginLeft: '2px' }}>accepted</span>
+                <span style={{ fontSize: '11px', color: 'rgba(0,0,255,1)', marginLeft: '2px' }}>accepted</span>
               </div>
 
               {/* Checkout button */}
@@ -298,7 +298,7 @@ export default function CartDrawer() {
                 onClick={closeCart}
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                  background: 'white', color: '#15803d',
+                  background: 'white', color: '#1D4ED8',
                   fontSize: '15px', fontWeight: 800,
                   padding: '15px', borderRadius: '14px',
                   textDecoration: 'none', border: 'none'
