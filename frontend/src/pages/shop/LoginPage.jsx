@@ -69,7 +69,7 @@ export default function LoginPage() {
         <div style={{ borderRadius: '20px', border: '2px solid #bfdbfe', overflow: 'hidden' }}>
 
           {/* Green header */}
-          <div style={{ background: '#16a34a', padding: '16px 24px' }}>
+          <div style={{ background: '#1D4ED8', padding: '16px 24px' }}>
             <p style={{ fontSize: '13px', fontWeight: 700, color: 'white' }}>Sign In to Your Account</p>
           </div>
 
@@ -129,7 +129,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                style={{ width: '100%', background: '#16a34a', color: 'white', fontWeight: 800, padding: '14px', borderRadius: '12px', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '15px', opacity: loading ? 0.7 : 1 }}
+                style={{ width: '100%', background: '#1D4ED8', color: 'white', fontWeight: 800, padding: '14px', borderRadius: '12px', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '15px', opacity: loading ? 0.7 : 1 }}
               >
                 {loading ? 'Signing in...' : 'Sign In'}
               </button>
